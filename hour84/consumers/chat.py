@@ -4,15 +4,25 @@ import json
 class Chat(AsyncWebsocketConsumer):
     async def connect(self):
         print('connect...')
+        # await self.accept()
+        self.room_name = "10086"
+        self.room_group_name = "room_%s" % self.room_name
+        await self.channel_layer.group_add(self.room_group_name,self.channel_name)
         await self.accept()
-        self.room_name = "room1"
-        await self.channel_layer.group_add(self.room_name,self.channel_name)
 
-    async def disconnect(self,code):
-        print('disconnect...',code)
+    async def disconnect(self,close_code):
+        print('disconnect...',close_code)
 
-    async def receive(self,data):
-        data = json.loads(data)
+    async def receive(self,text_data):
+        data = json.loads(text_data)
         print(data)
-        await self.channel_layer.group_send(self.room_data,data)
+        # data = text_data
+        print(self.room_name)
+        # await self.channel_layer.group_send(self.room_name,data)
+        await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "message":"twt"
+                }
+        )
 
