@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'hour84',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -122,3 +123,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# channels
+ASGI_APPLICATION = 'H84.asgi.application'
+CHANNEL_LAYERS = {
+    'default':{
+        'BACKEND':"channels_redis.core.RedisChannelLayer",
+        'CONGFIG':{
+            'hosts':[('127.0.0.1',6379)]
+        },
+    }
+
+}
+
