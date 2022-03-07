@@ -10,10 +10,10 @@ DELETE_SETTING = [
 ]
 
 class myUser(models.Model):
-    uuid = models.CharField(max_length=128)
-    name = models.CharField(max_length=128)
+    uuid = models.CharField(max_length=128,unique=True)
+    name = models.CharField(max_length=128,unique=True)
     auto_delete_setting = models.IntegerField(default=1,choices=DELETE_SETTING)
-    account = models.CharField(max_length=128,null=True,blank=True)
+    account = models.CharField(max_length=128,null=True,blank=True,unique=True)
     password = models.CharField(max_length=128,null=True,blank=True)
     gender = models.CharField(max_length=128,null=True,blank=True)
     birthday = models.DateField(max_length=128,null=True,blank=True)
