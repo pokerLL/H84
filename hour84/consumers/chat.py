@@ -44,8 +44,8 @@ class Chat(AsyncWebsocketConsumer):
                     }
             )
     
-	@database_sync_to_async
-    def db_get_user(username='',password=None):
+	#@database_sync_to_async
+	async def db_get_user(username='',password=None):
 		userresp = None
 		if password:
 			return True
@@ -61,7 +61,7 @@ class Chat(AsyncWebsocketConsumer):
 		cache.set('friend_%s'%self.username,[],None)
 		cache.set('group_%s'%self.username,[],None)
 
-	def update_user_in_db(username):
+	async def update_user_in_db(username):
 		pass
 
     async def remove_user_offline():
