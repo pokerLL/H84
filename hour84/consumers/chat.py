@@ -5,21 +5,14 @@ from django.core.cache import cache
 import json
 
 import os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'H84.settings')
 
-from hour84.models import myUser
+# from hour84.models import myUser
 
 
 class Chat(AsyncWebsocketConsumer):
 
     async def connect(self):
-        if 'online_user' not in cache.keys('user_*'):
-            cache.set('online_user',[],None)
         print('connect...')
-        # await self.accept()
-        self.room_name = "10086"
-        self.room_group_name = "room_%s" % self.room_name
-        await self.channel_layer.group_add(self.room_group_name,self.channel_name)
         await self.accept()
 
     async def disconnect(self,close_code):
@@ -50,16 +43,33 @@ class Chat(AsyncWebsocketConsumer):
                     }
             )
     
-    
+    def db_get_user(username='',password=None):
+	return True
+
+    async def add_user_online():
+	if not cache.get('alluser_online'):
+	    cache.set('alluser_online',[],None)
+	pass
+
+    def update_user_in_db(username):
+	pass
+
+    async def remove_user_offline():
+	pass
 
     async def login_event(self, data):
         print('login....')
-        username = data['username']
+	self.username=data['username']
         if 'password' in data.keys():
-            pass
+            user = self.db_get_user(username=data['username'],password=data['password']):
+	    if user:
+		self.update_user_in_db()
+	    self.add_user_online()
         else:
-            pass
-
+	    user = self.db_get_user(username=username)
+	    if not user:
+		self.username=username
+		add_user_online()
 
     async def search_event(self, data):
         print("search ....")
