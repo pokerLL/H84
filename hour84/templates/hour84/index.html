@@ -37,7 +37,8 @@
 		</div>
 
 		<script type="text/javascript">
-			var HOST = '120.24.175.31:8000';
+			//var HOST = '120.24.175.31:8000';
+            var HOST = window.location.host;
 			var socket = new WebSocket(
 					"ws://" +
 					HOST +
@@ -49,8 +50,7 @@
 				
 			socket.onmessage = function(e) {
 				console.log("reecive message...........");
-				var data = e['data'];
-				document.querySelector('.socket-response').innerText = data;
+                document.querySelector('.socket-response').innerText = e['data'];
 			}
 			index_btn.onclick = function() {
 				var tt = new Date();
@@ -60,7 +60,7 @@
 				var time_now = tt.getFullYear() + "-" + (tt.getMonth() + 1) + "-" + tt.getDate() + " " + tt.getHours() +
 					":" + tt.getMinutes() + ":" + tt.getSeconds();
 				socket.send(JSON.stringify({
-					'action': 'login_a',
+					'action': 'login',
 					'username': uname,
 					'password': psd,
 					'setting': set,

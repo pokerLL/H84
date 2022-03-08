@@ -7,12 +7,13 @@ import json
 import os
 ONLINE_USER = 'chat_online_user'
 
-# from hour84.models import myUser
+from hour84.models import myUser
 
 
 class Chat(AsyncWebsocketConsumer):
 
     async def connect(self):
+        self.username = '10086'
         print('connect...')
         await self.accept()
 
@@ -24,7 +25,7 @@ class Chat(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(data))
 
     # event router
-    async def receive(self,text_data):
+    async def receive(self, text_data):
         data = json.loads(text_data)
         action = data.get('action','')
         print(data)
@@ -37,20 +38,45 @@ class Chat(AsyncWebsocketConsumer):
             await self.message_event(data)
         else:
             await self.channel_layer.group_send(
-                    self.room_group_name,
+                    self.username,
                     {
-                        'type'      : 'group_send_event',
-                        'data'   : data,
+                        'type': 'group_send_event',
+                        'data': data,
                     }
             )
     
-    #@database_sync_to_async
-    async def db_get_user(username='',password=None):
-        userresp = None
-        if password:
-            return True
+    @database_sync_to_async
+    def user_login_or_register(self, username='',password=None):
+        print("user_login_or_register")
+        FLAG = False
+        print(username, '-', password)
+        user = myUser.objects.filter(username=username)
+        if len(user):
+            user = myUser.objects.filter(username=username, password=password)
+            if len(user):
+                FLAG = True
         else:
-            return True
+            FLAG = True
+            myUser.objects.create(username=username, password=password)
+
+        if FLAG:
+            print('ttt')
+            self.username = username
+            self.add_user_online()
+            online_user_num = len(cache.get(ONLINE_USER, []))
+            self.send(text_data=json.dumps({
+                'code': 200,
+                'online_user_num': online_user_num,
+            }))
+        else:
+            print('fff')
+            self.send(text_data=json.dumps({
+                'code': 400,
+            }))
+
+    @database_sync_to_async
+    def anonymous_user_login(self):
+        print("anonymous_user_login")
 
     async def add_user_online(self):
         online_user_list = cache.get(ONLINE_USER,None)
@@ -71,15 +97,10 @@ class Chat(AsyncWebsocketConsumer):
         cache.delete_many(['friend_%s'%self.username,'group_%s'%self.username])
 
     async def login_event(self, data):
-        print('login....')
-        self.username=data['username']
         if 'password' in data.keys():
-            # await self.db_get_user(data['username'],data['password']):
-            pass
+            await self.user_login_or_register(data['username'], data['password'])
         else:
-            user = self.db_get_user()
-            if not user:
-                await self.add_user_online()
+            await self.anonymous_user_login()
 
     async def search_event(self, data):
         print("search ....")

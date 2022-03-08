@@ -11,10 +11,8 @@ DELETE_SETTING = [
 
 
 class myUser(models.Model):
-    uuid = models.CharField(max_length=128, unique=True)
-    name = models.CharField(max_length=128, unique=True)
+    username = models.CharField(max_length=128, unique=True)
     auto_delete_setting = models.IntegerField(default=1, choices=DELETE_SETTING)
-    account = models.CharField(max_length=128, null=True, blank=True, unique=True)
     password = models.CharField(max_length=128, null=True, blank=True)
     gender = models.CharField(max_length=128, null=True, blank=True)
     birthday = models.DateField(max_length=128, null=True, blank=True)
@@ -22,7 +20,6 @@ class myUser(models.Model):
 
 
 class myUserMessage(models.Model):
-    uuid = models.CharField(max_length=128, unique=True)
     from_user = models.ManyToManyField('myUser', related_name='from_user')
     to_user = models.ManyToManyField('myUser', related_name='to_user')
     content = models.CharField(max_length=1024)
@@ -30,7 +27,6 @@ class myUserMessage(models.Model):
 
 
 class myRoomMessage(models.Model):
-    uuid = models.CharField(max_length=128, unique=True)
     from_user = models.ManyToManyField('myUser')
     to_room = models.ManyToManyField('myRoom')
     content = models.CharField(max_length=1024)
@@ -38,7 +34,6 @@ class myRoomMessage(models.Model):
 
 
 class myRoom(models.Model):
-    uuid = models.CharField(max_length=128, unique=True)
     name = models.CharField(max_length=128, unique=True)
     auto_delete_setting = models.IntegerField(default=3)
     c_time = models.DateTimeField(auto_now_add=True)

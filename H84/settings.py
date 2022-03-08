@@ -88,8 +88,6 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': [
             'redis://127.0.0.1:6379', # leader
-            'redis://127.0.0.1:6378', # read-replica 1
-            'redis://127.0.0.1:6377', # read-replica 2
         ],
     }
 }
