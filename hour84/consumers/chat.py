@@ -62,17 +62,18 @@ class Chat(AsyncWebsocketConsumer):
         if FLAG:
             print('ttt')
             self.username = username
-            self.add_user_online()
+            # self.add_user_online()
             online_user_num = len(cache.get(ONLINE_USER, []))
-            self.send(text_data=json.dumps({
-                'code': 200,
-                'online_user_num': online_user_num,
-            }))
+            print(online_user_num)
+            # self.send({
+            #     'code': 200,
+            #     'online_user_num': online_user_num,
+            # })
         else:
             print('fff')
-            self.send(text_data=json.dumps({
-                'code': 400,
-            }))
+            # self.send({
+            #     'code': 400,
+            # })
 
     @database_sync_to_async
     def anonymous_user_login(self):
@@ -97,7 +98,7 @@ class Chat(AsyncWebsocketConsumer):
         cache.delete_many(['friend_%s'%self.username,'group_%s'%self.username])
 
     async def login_event(self, data):
-        if 'password' in data.keys():
+        if len(data['password']):
             await self.user_login_or_register(data['username'], data['password'])
         else:
             await self.anonymous_user_login()

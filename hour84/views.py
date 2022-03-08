@@ -4,4 +4,7 @@ from django.shortcuts import render
 
 
 def index(request):
-    return render(request,'hour84/index.html') 
+    return render(request,'hour84/index.html')
+
+def login_or_register(request):
+    pass
