@@ -4,7 +4,10 @@ from django.conf import settings
 from django.core.cache import cache
 import json
 
-# from hour84.models import myUser
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'H84.settings')
+
+from hour84.models import myUser
 
 
 class Chat(AsyncWebsocketConsumer):

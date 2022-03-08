@@ -4,6 +4,6 @@ from django.contrib import admin
 from hour84.models import *
 
 admin.site.register(myUser)
-# admin.site.register(myUserMessage)
-# admin.site.register(myRoomMessage)
-# admin.site.register(myRoom)
+admin.site.register(myUserMessage)
+admin.site.register(myRoomMessage)
+admin.site.register(myRoom)

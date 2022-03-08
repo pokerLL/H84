@@ -20,21 +20,22 @@ class myUser(models.Model):
     c_time = models.DateTimeField(auto_now_add=True)
 
 
-class myUserMessage():
-    uuid = models.CharField(max_length=128)
-    from_user = models.ManyToManyField('myUser')
-    to_user = models.ManyToManyField('myUser')
+class myUserMessage(models.Model):
+    uuid = models.CharField(max_length=128,unique=True)
+    from_user = models.ManyToManyField('myUser',related_name='from_user')
+    to_user = models.ManyToManyField('myUser',related_name='to_user')
     content = models.CharField(max_length=1024)
     c_time = models.DateTimeField(auto_now_add=True)
 
-class myRoomMessage():
-    uuid = models.CharField(max_length=128)
+class myRoomMessage(models.Model):
+    uuid = models.CharField(max_length=128,unique=True)
     from_user = models.ManyToManyField('myUser')
     to_room = models.ManyToManyField('myRoom')
     content = models.CharField(max_length=1024)
     c_time=models.DateTimeField(auto_now_add=True)
 
-class myRoom():
-    uuid = models.CharField(max_length=128)
+class myRoom(models.Model):
+    uuid = models.CharField(max_length=128,unique=True)
+    name = models.CharField(max_length=128,unique=True)
     auto_delete_setting = models.IntegerField(default=3)
     c_time = models.DateTimeField(auto_now_add=True)
