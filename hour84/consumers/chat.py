@@ -5,6 +5,7 @@ from django.core.cache import cache
 import json
 
 import os
+ONLINE_USER = 'chat_online_user'
 
 # from hour84.models import myUser
 
@@ -43,33 +44,46 @@ class Chat(AsyncWebsocketConsumer):
                     }
             )
     
+	@database_sync_to_async
     def db_get_user(username='',password=None):
-	return True
+		userresp = None
+		if password:
+			return True
+		else:
+			return True
+		return useresp
 
     async def add_user_online():
-	if not cache.get('alluser_online'):
-	    cache.set('alluser_online',[],None)
-	pass
+		online_user_list = cache.get(ONLINE_USER,None)
+		if not online_user_list:
+			cache.set(ONLINE_USER,[],None)
+		cache.set(ONLINE_USER,online_user_list.append(self.username),None)
+		cache.set('friend_%s'%self.username,[],None)
+		cache.set('group_%s'%self.username,[],None)
 
-    def update_user_in_db(username):
-	pass
+	def update_user_in_db(username):
+		pass
 
     async def remove_user_offline():
-	pass
+		online_user_list = cache.get(ONLINE_USER,None)
+		if not online_user_list:
+			return
+		cache.set(ONLINE_USER,online_user_list.remove(self.username),None)
+		cache.delete_many(['friend_%s'%self.username,'group_%s'%self.username])
 
     async def login_event(self, data):
         print('login....')
-	self.username=data['username']
-        if 'password' in data.keys():
-            user = self.db_get_user(username=data['username'],password=data['password']):
-	    if user:
-		self.update_user_in_db()
-	    self.add_user_online()
-        else:
-	    user = self.db_get_user(username=username)
-	    if not user:
-		self.username=username
-		add_user_online()
+		self.username=data['username']
+		if 'password' in data.keys():
+			user = self.db_get_user(username=data['username'],password=data['password']):
+			if user:
+				self.update_user_in_db()
+			self.add_user_online()
+		else:
+			user = self.db_get_user(username=username)
+			if not user:
+				self.username=username
+				add_user_online()
 
     async def search_event(self, data):
         print("search ....")
