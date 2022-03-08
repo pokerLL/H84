@@ -1,7 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.conf import settings
-from django.core import caches
+from django.core.cache import cache
 import json
 
 # from hour84.models import myUser
@@ -10,6 +10,8 @@ import json
 class Chat(AsyncWebsocketConsumer):
 
     async def connect(self):
+        if 'online_user' not in cache.keys('user_*'):
+            cache.set('online_user',[],None)
         print('connect...')
         # await self.accept()
         self.room_name = "10086"
