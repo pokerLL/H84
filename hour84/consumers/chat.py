@@ -44,46 +44,42 @@ class Chat(AsyncWebsocketConsumer):
                     }
             )
     
-	#@database_sync_to_async
-	async def db_get_user(username='',password=None):
-		userresp = None
-		if password:
-			return True
-		else:
-			return True
-		return useresp
+    #@database_sync_to_async
+    async def db_get_user(username='',password=None):
+        userresp = None
+        if password:
+            return True
+        else:
+            return True
 
-    async def add_user_online():
-		online_user_list = cache.get(ONLINE_USER,None)
-		if not online_user_list:
-			cache.set(ONLINE_USER,[],None)
-		cache.set(ONLINE_USER,online_user_list.append(self.username),None)
-		cache.set('friend_%s'%self.username,[],None)
-		cache.set('group_%s'%self.username,[],None)
+    async def add_user_online(self):
+        online_user_list = cache.get(ONLINE_USER,None)
+        if not online_user_list:
+            cache.set(ONLINE_USER,[],None)
+        cache.set(ONLINE_USER,online_user_list.append(self.username),None)
+        cache.set('friend_%s'%self.username,[],None)
+        cache.set('group_%s'%self.username,[],None)
 
-	async def update_user_in_db(username):
-		pass
+    async def update_user_in_db(username):
+        pass
 
-    async def remove_user_offline():
-		online_user_list = cache.get(ONLINE_USER,None)
-		if not online_user_list:
-			return
-		cache.set(ONLINE_USER,online_user_list.remove(self.username),None)
-		cache.delete_many(['friend_%s'%self.username,'group_%s'%self.username])
+    async def remove_user_offline(self):
+        online_user_list = cache.get(ONLINE_USER,None)
+        if not online_user_list:
+            return
+        cache.set(ONLINE_USER,online_user_list.remove(self.username),None)
+        cache.delete_many(['friend_%s'%self.username,'group_%s'%self.username])
 
     async def login_event(self, data):
         print('login....')
-		self.username=data['username']
-		if 'password' in data.keys():
-			user = self.db_get_user(username=data['username'],password=data['password']):
-			if user:
-				self.update_user_in_db()
-			self.add_user_online()
-		else:
-			user = self.db_get_user(username=username)
-			if not user:
-				self.username=username
-				add_user_online()
+        self.username=data['username']
+        if 'password' in data.keys():
+            # await self.db_get_user(data['username'],data['password']):
+            pass
+        else:
+            user = self.db_get_user()
+            if not user:
+                await self.add_user_online()
 
     async def search_event(self, data):
         print("search ....")
