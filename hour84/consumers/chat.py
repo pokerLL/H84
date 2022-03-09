@@ -140,23 +140,21 @@ class Chat(WebsocketConsumer):
         ONLINE_USER.remove(self.username)
         cache.delete_many(['friend_%s' % self.username, 'group_%s' % self.username])
 
-
-    def cache_friend_add(self,_from,_to):
+    def cache_friend_add(self, _from, _to):
         cc = 'friend_%s'
-        print(cache.get(cc%self.username))
-        cache.set(cc%self.username,cache.get(cc%self.username).add('poker'),None)
-        print(cache.get(cc%self.username))
+        print(cache.get(cc % self.username))
+        cache.set(cc % self.username, cache.get(cc % self.username).add('poker'), None)
+        print(cache.get(cc % self.username))
 
-    
-    def cache_frined_remove(self,_from,_to):
-        cache.set('friend_%s'%_from,cache.get('friend_%s'%_from).remove(_to),None)
-        cache.set('friend_%s'%_to,cache.get('friend_%s'%_to).remove(_from),None)
-    
-    def cache_group_add(self,room):
-        cache.set('group_%s'%self.username,cache.get('group_%s'%self.username).append(room),None)
+    def cache_friend_remove(self, _from, _to):
+        cache.set('friend_%s' % _from, cache.get('friend_%s' % _from).remove(_to), None)
+        cache.set('friend_%s' % _to, cache.get('friend_%s' % _to).remove(_from), None)
 
-    def cache_group_remove(self,room):
-        cache.set('group_%s'%self.username,cache.get('group_%s'%self.username).remove(room),None)
+    def cache_group_add(self, room):
+        cache.set('group_%s' % self.username, cache.get('group_%s' % self.username).append(room), None)
+
+    def cache_group_remove(self, room):
+        cache.set('group_%s' % self.username, cache.get('group_%s' % self.username).remove(room), None)
 
     def login_event(self, data):
         if data['password']:
@@ -165,7 +163,7 @@ class Chat(WebsocketConsumer):
             self.anonymous_user_login(data['username'])
         if self.has_login:
             async_to_sync(self.channel_layer.group_add)(self.username, self.channel_name)
-        self.cache_friend_add(self.username,'pokr')
+        self.cache_friend_add(self.username, 'pokr')
 
     def search_event(self, data):
         print("search ....")
@@ -189,16 +187,15 @@ class Chat(WebsocketConsumer):
         content = data['content']
         _from = data['_from']
         _to = data['_to']
-        if data['object']=='user':
-            self.cache_friend_add(_from,_to)
+        if data['object'] == 'user':
+            self.cache_friend_add(_from, _to)
         else:
             self.cache_group_add(_to)
-        async_to_sync(self.channel_layer.group_send)(_to,{
-                'type':"group_send_event",
-                'data':data,
-            })
-        async_to_sync(self.channel_layer.group_send)(_from,{
-                'type':'group_send_event',
-                'data':data,
-
-            })
+        async_to_sync(self.channel_layer.group_send)(_to, {
+            'type': "group_send_event",
+            'data': data,
+        })
+        async_to_sync(self.channel_layer.group_send)(_from, {
+            'type': 'group_send_event',
+            'data': data,
+        })

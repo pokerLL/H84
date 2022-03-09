@@ -15,14 +15,12 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 from hour84.routing import websocket_urlpatterns
 
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'H84.settings')
 # application = get_asgi_application()
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
-                    URLRouter(websocket_urlpatterns)
-                ),
+        URLRouter(websocket_urlpatterns)
+    ),
 })
-

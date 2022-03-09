@@ -132,11 +132,11 @@
         username_input_box = document.querySelector(".username-inputer"),
         username_lock_btn = document.querySelector(".username_lock_btn"),
         //websocket = new WebSocket("ws://127.0.0.1:6789/");
-	websocket = new WebSocket(
-		"ws://"
-		+ window.location.host
-		+ "wss/chat"
-	);
+        websocket = new WebSocket(
+            "ws://"
+            + window.location.host
+            + "wss/chat"
+        );
 
     function boxtobottom() {
         var hh = chat_box.scrollHeight;

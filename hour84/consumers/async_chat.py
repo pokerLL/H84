@@ -5,6 +5,7 @@ from django.core.cache import cache
 import json
 
 import os
+
 ONLINE_USER = 'chat_online_user'
 
 from hour84.models import myUser
@@ -17,8 +18,8 @@ class Chat(AsyncWebsocketConsumer):
         print('connect...')
         await self.accept()
 
-    async def disconnect(self,close_code):
-        print('disconnect...',close_code)
+    async def disconnect(self, close_code):
+        print('disconnect...', close_code)
 
     async def group_send_event(self, event):
         data = event['data']
@@ -27,7 +28,7 @@ class Chat(AsyncWebsocketConsumer):
     # event router
     async def receive(self, text_data):
         data = json.loads(text_data)
-        action = data.get('action','')
+        action = data.get('action', '')
         print(data)
 
         if action == 'login':
@@ -38,15 +39,15 @@ class Chat(AsyncWebsocketConsumer):
             await self.message_event(data)
         else:
             await self.channel_layer.group_send(
-                    self.username,
-                    {
-                        'type': 'group_send_event',
-                        'data': data,
-                    }
+                self.username,
+                {
+                    'type': 'group_send_event',
+                    'data': data,
+                }
             )
-    
+
     @database_sync_to_async
-    def user_login_or_register(self, username='',password=None):
+    def user_login_or_register(self, username='', password=None):
         print("user_login_or_register")
         FLAG = False
         print(username, '-', password)
@@ -80,22 +81,22 @@ class Chat(AsyncWebsocketConsumer):
         print("anonymous_user_login")
 
     async def add_user_online(self):
-        online_user_list = cache.get(ONLINE_USER,None)
+        online_user_list = cache.get(ONLINE_USER, None)
         if not online_user_list:
-            cache.set(ONLINE_USER,[],None)
-        cache.set(ONLINE_USER,online_user_list.append(self.username),None)
-        cache.set('friend_%s'%self.username,[],None)
-        cache.set('group_%s'%self.username,[],None)
+            cache.set(ONLINE_USER, [], None)
+        cache.set(ONLINE_USER, online_user_list.append(self.username), None)
+        cache.set('friend_%s' % self.username, [], None)
+        cache.set('group_%s' % self.username, [], None)
 
     async def update_user_in_db(username):
         pass
 
     async def remove_user_offline(self):
-        online_user_list = cache.get(ONLINE_USER,None)
+        online_user_list = cache.get(ONLINE_USER, None)
         if not online_user_list:
             return
-        cache.set(ONLINE_USER,online_user_list.remove(self.username),None)
-        cache.delete_many(['friend_%s'%self.username,'group_%s'%self.username])
+        cache.set(ONLINE_USER, online_user_list.remove(self.username), None)
+        cache.delete_many(['friend_%s' % self.username, 'group_%s' % self.username])
 
     async def login_event(self, data):
         if len(data['password']):
