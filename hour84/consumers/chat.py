@@ -1,3 +1,8 @@
+import django
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "H84.settings")# project_name 项目名称
+django.setup()
+
 from channels.generic.websocket import WebsocketConsumer
 from django.conf import settings
 from django.core.cache import cache
@@ -10,7 +15,8 @@ from hour84.models import myUser
 
 
 class Chat(WebsocketConsumer):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.from_db = False
         self.username = '084660587'
 
@@ -78,7 +84,7 @@ class Chat(WebsocketConsumer):
 
     def add_user_online(self,username):
         self.username=username
-        ONLINE_USER.insert(self.username)
+        ONLINE_USER.add(self.username)
         cache.set('friend_%s'%self.username,[],None)
         cache.set('group_%s'%self.username,[],None)
 

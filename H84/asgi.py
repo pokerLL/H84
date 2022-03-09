@@ -8,7 +8,7 @@ https://docs.djangoproject.com/en/4.0/howto/deployment/asgi/
 """
 
 import os
-
+import django
 
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
@@ -17,7 +17,6 @@ from hour84.routing import websocket_urlpatterns
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'H84.settings')
-
 # application = get_asgi_application()
 
 application = ProtocolTypeRouter({
