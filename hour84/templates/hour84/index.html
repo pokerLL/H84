@@ -28,7 +28,7 @@
 			<input placeholder="在此输入搜索内容" class="search-input">
 			<button class="search-btn btn">确定</button>
 			<!-- 33333333333333333333333 -->
-			<input class="message-input btn" placeholder="在此输入你要聊天对象或群组名称">
+			<input class="message-to btn" placeholder="在此输入你要聊天对象或群组名称">
 			<input class="message-input btn" placeholder="在此输入你要发送的聊天内容">
             <label><input type="radio" name="message" value="single" checked="" />单人聊天</label>
 			<label><input type="radio" name="message" value="multi" />群组聊天</label>
@@ -89,19 +89,24 @@
 			}
 			msg_btn.onclick = function() {
 				var tt = new Date();
-				var msg_content = document.querySelector('.message-input').value;
+				var msg_content = document.querySelector('.message-input').value,
+					msg_obj = 'group',
+					msg_to = document.querySelector('.message-to').value;
+				if(document.querySelector('[name="message"]').checked){
+					msg_obj = 'user';
+				}
 				var time_now = tt.getFullYear() + "-" + (tt.getMonth() + 1) + "-" + tt.getDate() + " " + tt.getHours() +
 					":" + tt.getMinutes() + ":" + tt.getSeconds();
 				socket.send(JSON.stringify({
-					action: 'message_a',
+					action: 'message',
 					content: msg_content,
 					time: time_now,
-					from: "poker",
-					object: "user",
+					_from: "poker",
+					_to:msg_to,
+					object: msg_obj,
 				}));
 			}
 		</script>
-
 	</body>
 </html>
 
