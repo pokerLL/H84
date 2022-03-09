@@ -1,0 +1,188 @@
+.whole-page {
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	width: 100%;
+	height: 100%;
+	box-sizing:border-box;
+	/* background: url(https://gimg2.baidu.com/image_search/src=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_match%2F0%2F11695386033%2F0.jpg&refer=http%3A%2F%2Finews.gtimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1649431904&t=58778d0de34f6296713888e7212fd184); */
+}
+
+
+.vcenter {
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.login {
+	/* background-color: red; */
+	width: 30%;
+	height: 30%;
+}
+
+.login > div {
+	height: auto;
+	font-size: 20px;
+	align-content: center;
+}
+
+.inputer {
+	padding: 0;
+	width: 100%;
+	height: 25%;
+}
+
+.hide {
+	display: none;
+}
+
+.app-left-pane {
+	width: 20%;
+	height: 100%;
+	background-color: orange;
+	left: 0%;
+	top: 0%;
+	position: absolute;
+	/* border: orangered 5px solid; */
+}
+
+.app-left-pane-top {
+	width: 100%;
+	height: 30%;
+	top: 0%;
+	left: 0%;
+	position: absolute;
+	/* background-color: grey; */
+}
+
+.app-left-pane-top-userinfo-userpic{
+	width: 30%;
+	top:10%;
+	left: 10%;
+	position: absolute;
+}
+
+.app-left-pane-top-userinfo-username{
+	top:10%;
+	left: 45%;
+	position: absolute;
+}
+
+.app-left-pane-top-search{
+	width: 100%;
+	height: 20%;
+	bottom: 0%;
+	left: 0%;
+	position: absolute;
+	/* background-color: aliceblue; */
+}
+.app-left-pane-top-searcher{
+	height: 100%;
+	width: 100%;
+}
+
+
+.app-left-pane-bottom-top{
+	width: 100%;
+	height: 10%;
+	background-color: greenyellow;
+	left: 0%;
+	top: 0%;
+	position: absolute;
+}
+
+.app-left-pane-bottom-top > button {
+	width: 50%;
+	height: 100%;
+	float: left;
+}
+
+.app-left-pane-bottom-bottom{
+	bottom: 0%;
+	width: 100%;
+	position: absolute;
+	/* background-color: darkmagenta; */
+}
+
+.app-left-pane-bottom-bottom-info{
+	margin-bottom: 10px;
+	margin-left: 10px;
+}
+
+.app-left-pane-bottom {
+	width: 100%;
+	height: 70%;
+	top: 30%;
+	left: 0%;
+	position: absolute;
+	/* background-color: brown; */
+}
+
+.app-right-pane {
+	width: 80%;
+	height: 100%;
+	background-color: burlywood;
+	left: 20%;
+	top: 0%;
+	position: absolute;
+	/* border: red 5px solid; */
+}
+
+.app-right-pane-top {
+	width: 100%;
+	height: 15%;
+	top: 0%;
+	left: 0%;
+	position: absolute;
+	background-color: yellowgreen;
+}
+
+.app-right-pane-top-roominfo{
+	width: 70%;
+	height: 70%;
+	left: 5%;
+	top: 15%;
+	position: absolute;
+}
+
+.app-right-pane-body {
+	width: 100%;
+	height: 70%;
+	top: 15%;
+	left: 0%;
+	position: absolute;
+	/* background-color: chocolate; */
+	overflow-x: auto;
+	word-wrap:break-word;
+}
+
+.app-right-pane-bottom {
+	width: 100%;
+	height: 15%;
+	top: 85%;
+	left: 0%;
+	position: absolute;
+	background-color: green;
+}
+
+.app-right-pane-bottom > textarea{
+	height: 100%;
+	width: 100%;
+	bottom: 10px;
+}
+.app-right-pane-bottom > button{
+	height: 20%;
+	width: 20%;
+	bottom: 0%;
+	right: 0%;
+	position: absolute;
+}
+
+input{
+	box-sizing:border-box;
+}
+textarea{
+	box-sizing:border-box;
+}
