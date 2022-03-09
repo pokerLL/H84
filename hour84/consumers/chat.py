@@ -68,11 +68,12 @@ class Chat(WebsocketConsumer):
                 resp['status']=False
                 resp['reason']='password is not correct'
             else: # dont input a passwod and username is duplicated
-                resp['action']='register'
-                resp['status']=False
+                resp['action']= 'register'
+                resp['status']= False
                 resp['reason']='depulicate username'
-        else: # annymous user login
-            myUser.objects.create(username=username)
+        elif password: # user register
+            resp['action'] = 'register'
+            myUser.objects.create(username=username, password=password)
         if resp['status']:
             self.add_user_online(username)
             if resp['action'] == 'login':
@@ -88,20 +89,19 @@ class Chat(WebsocketConsumer):
         cache.set('friend_%s'%self.username,[],None)
         cache.set('group_%s'%self.username,[],None)
 
-    def update_user_in_db(username):
+    def update_user_in_db(self,username):
         pass
     
-    def load_user_from_db(username):
-        pass
+    def load_user_from_db(self):
+        user = myUser.objects.get(username=self.username)
+        friends = user.friends.all()
+        print(friends)
 
     def remove_user_offline(self):
         cache.delete_many(['friend_%s'%self.username,'group_%s'%self.username])
 
     def login_event(self, data):
-        if len(data['password']):
-            self.user_login_or_register(data['username'], data['password'])
-        else:
-            self.anonymous_user_login()
+        self.user_login_or_register(data['username'], data['password'])
 
     def search_event(self, data):
         print("search ....")
