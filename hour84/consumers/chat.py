@@ -146,11 +146,12 @@ class Chat(WebsocketConsumer):
                           'group_%s' % self.username])
 
     def cache_friend_add(self, _from, _to):
-        cc = 'friend_%s'
-        print(cache.get(cc % self.username))
-        cache.set(cc % self.username, cache.get(cc %
-                  self.username).add('poker'), None)
-        print(cache.get(cc % self.username))
+        print(cache.get("friend_%s" % self.username))
+        cache.set("friend_%s" % _from, cache.get(
+            "friend_%s" % self.username).add(_to), None)
+        cache.set("friend_%s" % _to, cache.get("friend_%s" %
+                  self.username).add(_from), None)
+        print(cache.get("friend_%s" % self.username))
 
     def cache_friend_remove(self, _from, _to):
         cache.set('friend_%s' % _from, cache.get(
