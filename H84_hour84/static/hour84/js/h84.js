@@ -47,8 +47,8 @@ function add_group(roomname) {
 
 }
 
-function register_event(data){
-    
+function register_event(data) {
+
 }
 
 function search_event(data) {
@@ -67,9 +67,9 @@ socket.onopen = function () {
 socket.onmessage = function (e) {
     var data = JSON.parse(e.data);
     console.log(data);
-    if (data.action === 'login' || data.action==='anonymous_login') {
+    if (data.action === 'login' || data.action === 'anonymous_login') {
         login_event(data);
-    } else if(data.action =='register'){
+    } else if (data.action == 'register') {
         register_event(data);
     } else if (data.action === 'search') {
         search_event(data);

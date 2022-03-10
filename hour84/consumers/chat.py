@@ -162,6 +162,7 @@ class Chat(WebsocketConsumer):
         else:
             self.anonymous_user_login(data['username'])
         if self.has_login:
+            self.username = data['username']
             async_to_sync(self.channel_layer.group_add)(self.username, self.channel_name)
             self.cache_friend_add(self.username, 'pokr')
 
