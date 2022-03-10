@@ -1,65 +1,71 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8" />
-		<title></title>
-		<link rel="stylesheet" href="../../static/hour84/css/h84.css">
-	</head>
-	<body>
-		<div class="index whole-page ">
-			<div class="login vcenter hide">
-				<input type="text" class="inputer" placeholder="用户名" name="username" />
-				<input type="text" class="inputer" placeholder="密码" name="password" />
-				<div>
-					设置：
-					<label><input type="radio" name="setting" value="0" checked />2小时</label>
-					<label><input type="radio" name="setting" value="1" />12小时</label>
-					<label><input type="radio" name="setting" value="2" />24小时</label>
-					<label><input type="radio" name="setting" value="3" />48小时</label>
-				</div>
-				<button class="inputer">确定</button>
+
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<link rel="stylesheet" href="../../static/hour84/css/h84.css">
+	
+</head>
+
+<body>
+	<div class="index whole-page ">
+		<div class="login vcenter">
+			<input type="text" class="inputer" placeholder="用户名" name="username" />
+			<input type="text" class="inputer" placeholder="密码" name="password" />
+			<div>
+				设置：
+				<label><input type="radio" name="setting" value="0" checked />2小时</label>
+				<label><input type="radio" name="setting" value="1" />12小时</label>
+				<label><input type="radio" name="setting" value="2" />24小时</label>
+				<label><input type="radio" name="setting" value="3" />48小时</label>
 			</div>
+			<span class="index-info-message"></span>
+			<button class="inputer">确定</button>
 		</div>
-		<div class="app whole-page">
-			<div class="app-left-pane">
-				<div class="app-left-pane-top">
-					<div class="app-left-pane-top-userinfo">
-						<img src="../../static/hour84/img/tx.jpg" class="app-left-pane-top-userinfo-userpic">
-						<div class="app-left-pane-top-userinfo-username">poker(正式)</div>
-					</div>
-					<div class="app-left-pane-top-search">
-						<input name="search" class="app-left-pane-top-searcher" placeholder="搜索" />
+	</div>
+	<div class="app whole-page hide">
+		<div class="app-left-pane">
+			<div class="app-left-pane-top">
+				<div class="app-left-pane-top-userinfo">
+					<img src="../../static/hour84/img/tx.jpg" class="app-left-pane-top-userinfo-userpic">
+					<div class="app-left-pane-top-userinfo-username">poker(正式)</div>
+				</div>
+				<div class="app-left-pane-top-search">
+					<input name="search" class="app-left-pane-top-searcher" placeholder="搜索" />
+				</div>
+			</div>
+			<div class="app-left-pane-bottom">
+				<div class="app-left-pane-bottom-top">
+					<button>好友</button>
+					<button style="left: 50%;top: 0%;">群聊</button>
+				</div>
+				<div class="app-left-pane-bottom-body">
+				</div>
+				<div class="app-left-pane-bottom-bottom">
+					<div class="app-left-pane-bottom-bottom-info">
+						当前共xxx人在线。
 					</div>
 				</div>
-				<div class="app-left-pane-bottom">
-					<div class="app-left-pane-bottom-top">
-						<button>好友</button>
-						<button style="left: 50%;top: 0%;">群聊</button>
-					</div>
-					<div class="app-left-pane-bottom-body">
-					</div>
-					<div class="app-left-pane-bottom-bottom">
-						<div class="app-left-pane-bottom-bottom-info">
-							当前共xxx人在线。
-						</div>
-					</div>
+			</div>
+
+		</div>
+		<div class="app-right-pane">
+			<div class="app-right-pane-top">
+				<div class="app-right-pane-top-roominfo">
+					ROOM1
 				</div>
+			</div>
+			<div class="app-right-pane-body">
 
 			</div>
-			<div class="app-right-pane">
-				<div class="app-right-pane-top">
-					<div class="app-right-pane-top-roominfo">
-						ROOM1
-					</div>
-				</div>
-				<div class="app-right-pane-body">
-					
-				</div>
-				<div class="app-right-pane-bottom">
-					<textarea></textarea>
-					<button>发送</button>
-				</div>
+			<div class="app-right-pane-bottom">
+				<textarea></textarea>
+				<button>发送</button>
 			</div>
 		</div>
-	</body>
+	</div>
+	<script src='../../static/hour84/js/h84.js'></script>
+</body>
+
 </html>

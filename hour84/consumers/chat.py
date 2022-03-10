@@ -163,7 +163,7 @@ class Chat(WebsocketConsumer):
             self.anonymous_user_login(data['username'])
         if self.has_login:
             async_to_sync(self.channel_layer.group_add)(self.username, self.channel_name)
-        self.cache_friend_add(self.username, 'pokr')
+            self.cache_friend_add(self.username, 'pokr')
 
     def search_event(self, data):
         print("search ....")
