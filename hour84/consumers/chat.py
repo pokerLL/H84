@@ -1,17 +1,15 @@
+import re
+from hour84.models import myUser, myRoom
+import json
+from asgiref.sync import async_to_sync
+from django.core.cache import cache
+from channels.generic.websocket import WebsocketConsumer
 import django
 import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "H84.settings")  # project_name 项目名称
+os.environ.setdefault("DJANGO_SETTINGS_MODULE",
+                      "H84.settings")  # project_name 项目名称
 django.setup()
-
-from channels.generic.websocket import WebsocketConsumer
-from django.core.cache import cache
-from asgiref.sync import async_to_sync
-import json
-
-from hour84.models import myUser, myRoom
-
-import re
 
 
 class online_user_list:
@@ -71,6 +69,8 @@ class Chat(WebsocketConsumer):
             self.search_event(data)
         elif action == 'message':
             self.message_event(data)
+        elif action == 'load_userinfo':
+            self.load_userinfo_event(data)
         else:
             async_to_sync(self.channel_layer.group_send)(
                 self.username,
@@ -80,7 +80,8 @@ class Chat(WebsocketConsumer):
                 }
             )
 
-    def user_login_or_register(self, username, password, setting):  # entered the password
+    # entered the password
+    def user_login_or_register(self, username, password, setting):
         print("user_login_or_register")
         resp = {
             'action': 'login',
@@ -96,7 +97,8 @@ class Chat(WebsocketConsumer):
                 resp['reason'] = 'password is not correct'
         else:
             resp['action'] = 'register'
-            myUser.objects.create(username=username, password=password, setting=setting)
+            myUser.objects.create(
+                username=username, password=password, setting=setting)
         if username not in ONLINE_USER and resp['status']:
             self.has_login = True
             self.add_user_online(username)
@@ -129,41 +131,60 @@ class Chat(WebsocketConsumer):
         pass
 
     def load_user_from_db(self):
+        if not self.from_db:
+            return None
         user = myUser.objects.get(username=self.username)
         friends = user.friends.all()
-        friend_list = []
+        friend_list = set()
         for it in friends:
-            friend_list.append(it.username)
+            friend_list.add(it.username)
         cache.set('friend_%s' % self.username, friend_list)
+
 
     def remove_user_offline(self):
         ONLINE_USER.remove(self.username)
-        cache.delete_many(['friend_%s' % self.username, 'group_%s' % self.username])
+        cache.delete_many(['friend_%s' % self.username,
+                          'group_%s' % self.username])
 
     def cache_friend_add(self, _from, _to):
         cc = 'friend_%s'
         print(cache.get(cc % self.username))
-        cache.set(cc % self.username, cache.get(cc % self.username).add('poker'), None)
+        cache.set(cc % self.username, cache.get(cc %
+                  self.username).add('poker'), None)
         print(cache.get(cc % self.username))
 
     def cache_friend_remove(self, _from, _to):
-        cache.set('friend_%s' % _from, cache.get('friend_%s' % _from).remove(_to), None)
-        cache.set('friend_%s' % _to, cache.get('friend_%s' % _to).remove(_from), None)
+        cache.set('friend_%s' % _from, cache.get(
+            'friend_%s' % _from).remove(_to), None)
+        cache.set('friend_%s' % _to, cache.get(
+            'friend_%s' % _to).remove(_from), None)
 
     def cache_group_add(self, room):
-        cache.set('group_%s' % self.username, cache.get('group_%s' % self.username).append(room), None)
+        cache.set('group_%s' % self.username, cache.get(
+            'group_%s' % self.username).append(room), None)
 
     def cache_group_remove(self, room):
-        cache.set('group_%s' % self.username, cache.get('group_%s' % self.username).remove(room), None)
+        cache.set('group_%s' % self.username, cache.get(
+            'group_%s' % self.username).remove(room), None)
+
+    def load_userinfo_event(self,data):
+        friends = cache.get('friend_%s'%self.username)
+        groups = cache.get('group_%s'%self.username)
+        self.send(json.dumps({
+            "friends":json.dumps(list(friends)),
+            "groups":json.dumps(list(groups)),
+        }))
 
     def login_event(self, data):
         if data['password']:
-            self.user_login_or_register(data['username'], data['password'], data['setting'])
+            self.user_login_or_register(
+                data['username'], data['password'], data['setting'])
         else:
             self.anonymous_user_login(data['username'])
         if self.has_login:
             self.username = data['username']
-            async_to_sync(self.channel_layer.group_add)(self.username, self.channel_name)
+            async_to_sync(self.channel_layer.group_add)(
+                self.username, self.channel_name)
             self.cache_friend_add(self.username, 'pokr')
 
     def search_event(self, data):
@@ -173,11 +194,13 @@ class Chat(WebsocketConsumer):
         mathch_list = set()
         if obj == 'user':
             mathch_list |= set(ONLINE_USER.match(content))
-            resp = list(myUser.objects.values('username', 'online').filter(username__contains=content).all())
+            resp = list(myUser.objects.values('username', 'online').filter(
+                username__contains=content).all())
             for it in resp:
                 mathch_list.add((it['username']))
         else:
-            resp = list(myRoom.objects.values('roomname').filter(roomname__contains=content).all())
+            resp = list(myRoom.objects.values('roomname').filter(
+                roomname__contains=content).all())
             for it in resp:
                 mathch_list.add(it['roomname'])
         print(mathch_list)

@@ -15,7 +15,7 @@ index_loginbtn.onclick = function () {
 }
 
 function login_event(data) {
-    if (data['status']) {
+    if (data['status'] === true) {
         document.querySelector('.index').setAttribute('class', 'index whole-page hide');
         document.querySelector('.app').setAttribute('class', 'app whole-page');
         alert('login success');
