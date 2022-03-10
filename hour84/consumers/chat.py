@@ -140,7 +140,6 @@ class Chat(WebsocketConsumer):
             friend_list.add(it.username)
         cache.set('friend_%s' % self.username, friend_list)
 
-
     def remove_user_offline(self):
         ONLINE_USER.remove(self.username)
         cache.delete_many(['friend_%s' % self.username,
@@ -167,12 +166,12 @@ class Chat(WebsocketConsumer):
         cache.set('group_%s' % self.username, cache.get(
             'group_%s' % self.username).remove(room), None)
 
-    def load_userinfo_event(self,data):
-        friends = cache.get('friend_%s'%self.username)
-        groups = cache.get('group_%s'%self.username)
+    def load_userinfo_event(self, data):
+        friends = cache.get('friend_%s' % self.username)
+        groups = cache.get('group_%s' % self.username)
         self.send(json.dumps({
-            "friends":json.dumps(list(friends)),
-            "groups":json.dumps(list(groups)),
+            "friends": json.dumps(list(friends)),
+            "groups": json.dumps(list(groups)),
         }))
 
     def login_event(self, data):
