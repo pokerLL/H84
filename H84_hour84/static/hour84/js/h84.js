@@ -1,16 +1,17 @@
-var HOST = '120.24.175.31:8000';
+// var HOST = '120.24.175.31:8000';
+var HOST = '127.0.0.1:8000';
 var socket = new WebSocket('ws://' + HOST + '/wss/chat/');
-var index_username = document.querySelector('[name="username"]').value,
-    index_password = document.querySelector('[name="password"]').value,
-    index_setting = document.querySelector('[name="setting"]').value,
-    index_loginbtn = document.querySelector('.inputer');
+var index_username = document.querySelector('[name="username"]'),
+    index_password = document.querySelector('[name="password"]'),
+    index_setting = document.querySelector('[name="setting"]'),
+    index_loginbtn = document.querySelector('.index-submit-btn');
 
 index_loginbtn.onclick = function () {
     socket.send(JSON.stringify({
         action: 'login',
-        username: index_username,
-        password: index_password,
-        setting: index_setting,
+        username: index_username.value,
+        password: index_password.value,
+        setting: index_setting.value,
     }));
 }
 
@@ -33,7 +34,7 @@ function login_success() {
 }
 
 // userinfo friend_list group_list
-function load_userinfo_event(data) {
+function load_userinfo(data) {
     var userinfo = data.userinfo,
         friend_list = data.friend_list,
         group_list = data.group_list;
@@ -67,7 +68,7 @@ socket.onopen = function () {
 socket.onmessage = function (e) {
     var data = JSON.parse(e.data);
     console.log(data);
-    if (data.action === 'login' || data.action === 'anonymous_login') {
+    if (data.action === 'login') {
         login_event(data);
     } else if (data.action == 'register') {
         register_event(data);
@@ -75,7 +76,7 @@ socket.onmessage = function (e) {
         search_event(data);
     } else if (data.action === 'message') {
         message_event(data);
-    } else if (data.action == 'load_user_info') {
+    } else if (data.action == 'load_userinfo') {
         load_userinfo_event(data);
     }
 }

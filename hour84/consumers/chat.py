@@ -1,15 +1,14 @@
+from channels.generic.websocket import WebsocketConsumer
+from django.core.cache import cache
+from asgiref.sync import async_to_sync
+import json
+from hour84.models import myUser, myRoom
+import re
 import django
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE",
                       "H84.settings")  # project_name 项目名称
 django.setup()
-
-import re
-from hour84.models import myUser, myRoom
-import json
-from asgiref.sync import async_to_sync
-from django.core.cache import cache
-from channels.generic.websocket import WebsocketConsumer
 
 
 class Chat(WebsocketConsumer):
@@ -59,6 +58,29 @@ class Chat(WebsocketConsumer):
 
     def login_event(self, data):
         print("login_event")
+        resp = {
+            'action': 'login',
+            'status': False
+        }
+        same_name_user = myUser.objects.filter(username=data['username'])
+        if(len(same_name_user) != 0): # 
+            if data['password'] == same_name_user[0].password:
+                resp['status'] = True
+                self.user = same_name_user
+            else:
+                resp['reason'] = 'Username duplicated or Password is not correct'
+        else:
+            resp['status']  = True
+            if data['password'] != '':
+                self.user = myUser.objects.create(username=data['username'],
+                                                  password=data['password'],
+                                                  setting=data['setting'])
+            else:
+                self.user = myUser()
+                self.user = data['username']
+                self.real_in_db = False
+        self.send(json.dumps(resp))
+
 
     def search_event(self, data):
         print("search_event")

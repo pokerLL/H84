@@ -14,24 +14,11 @@ class myUser(models.Model):
     setting = models.IntegerField(default=1, choices=DELETE_SETTING)
     password = models.CharField(max_length=128, null=True, blank=True,default='')
     c_time = models.DateTimeField(auto_now_add=True)
-    online = models.BooleanField(default=False)
     friends = models.ManyToManyField("self")
-    from_db = models.BooleanField(default=False)
+    real_in_db = models.BooleanField(default=True)
 
     def __str__(self):
         return self.username
-    
-    def online(self):
-        if self.from_db:
-            pass
-        else:
-            pass
-
-    def offline(self):
-        if self.from_db:
-            pass
-        else:
-            pass
 
 
 class myUserMessage(models.Model):
