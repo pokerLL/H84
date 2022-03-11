@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        .btn {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="vcenter index-body">
+
+    <input placeholder="请输入昵称" class="username">
+    <input placeholder="请输入密码" class="password">
+    <select class="index-select">
+        <option value="0">不保存</option>
+        <option value="1">12小时</option>
+        <option value="2">24小时</option>
+        <option value="3">48小时</option>
+    </select>
+    <button class="index-btn btn">确定</button>
+    <!-- 22222222222222222222222 -->
+    <label><input type="radio" name="search" value="user" checked=""/>搜人</label>
+    <label><input type="radio" name="search" value="group"/>搜群</label>
+    <input placeholder="在此输入搜索内容" class="search-input">
+    <button class="search-btn btn">确定</button>
+    <!-- 33333333333333333333333 -->
+    <input class="message-to btn" placeholder="在此输入你要聊天对象或群组名称">
+    <input class="message-input btn" placeholder="在此输入你要发送的聊天内容">
+    <label><input type="radio" name="message" value="single" checked=""/>单人聊天</label>
+    <label><input type="radio" name="message" value="multi"/>群组聊天</label>
+    <button class="message-btn btn">发送</button>
+    <!-- 33333333333333333333333 -->
+    <div style="width: 100%;height: 30%;background-color: aqua;" class="socket-response">
+    </div>
+</div>
+
+<script type="text/javascript">
+    //var HOST = '120.24.175.31:8000';
+    var HOST = window.location.host;
+    var socket = new WebSocket(
+        "ws://" +
+        HOST +
+        "/wss/chat/"
+        ),
+        index_btn = document.querySelector('.index-btn'),
+        search_btn = document.querySelector('.search-btn'),
+        msg_btn = document.querySelector('.message-btn');
+
+    socket.onmessage = function (e) {
+        console.log("reecive message...........");
+        document.querySelector('.socket-response').innerText = e['data'];
+    }
+    index_btn.onclick = function () {
+        var tt = new Date();
+        var uname = document.querySelector('.username').value,
+            psd = document.querySelector('.password').value,
+            set = document.querySelector('.index-select').value;
+        var time_now = tt.getFullYear() + "-" + (tt.getMonth() + 1) + "-" + tt.getDate() + " " + tt.getHours() +
+            ":" + tt.getMinutes() + ":" + tt.getSeconds();
+        socket.send(JSON.stringify({
+            'action': 'login',
+            'username': uname,
+            'password': psd,
+            'setting': set,
+            time: time_now,
+        }))
+    }
+    search_btn.onclick = function () {
+        var tt = new Date();
+        var radio_user = document.querySelector('[name="search"]'),
+            search_obj = 'group',
+            search_content = document.querySelector('.search-input').value;
+        var time_now = tt.getFullYear() + "-" + (tt.getMonth() + 1) + "-" + tt.getDate() + " " + tt.getHours() +
+            ":" + tt.getMinutes() + ":" + tt.getSeconds();
+        if (radio_user.checked) {
+            search_obj = 'user';
+        }
+        socket.send(JSON.stringify({
+            action: 'search',
+            content: search_content,
+            object: search_obj,
+            time: time_now,
+            from: "user",
+        }));
+    }
+    msg_btn.onclick = function () {
+        var tt = new Date();
+        var msg_content = document.querySelector('.message-input').value,
+            msg_obj = 'group',
+            msg_to = document.querySelector('.message-to').value;
+        if (document.querySelector('[name="message"]').checked) {
+            msg_obj = 'user';
+        }
+        var time_now = tt.getFullYear() + "-" + (tt.getMonth() + 1) + "-" + tt.getDate() + " " + tt.getHours() +
+            ":" + tt.getMinutes() + ":" + tt.getSeconds();
+        socket.send(JSON.stringify({
+            action: 'message',
+            content: msg_content,
+            time: time_now,
+            _from: "poker",
+            _to: msg_to,
+            object: msg_obj,
+        }));
+    }
+</script>
+</body>
+</html>
+

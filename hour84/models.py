@@ -9,19 +9,29 @@ DELETE_SETTING = [
     (3, 'TWODAY'),
 ]
 
-
 class myUser(models.Model):
     username = models.CharField(max_length=128, unique=True)
-    auto_delete_setting = models.IntegerField(default=1, choices=DELETE_SETTING)
-    password = models.CharField(max_length=128, null=True, blank=True)
-    gender = models.CharField(max_length=128, null=True, blank=True)
-    birthday = models.DateField(max_length=128, null=True, blank=True)
+    setting = models.IntegerField(default=1, choices=DELETE_SETTING)
+    password = models.CharField(max_length=128, null=True, blank=True,default='')
     c_time = models.DateTimeField(auto_now_add=True)
     online = models.BooleanField(default=False)
     friends = models.ManyToManyField("self")
+    from_db = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
+    
+    def online(self):
+        if self.from_db:
+            pass
+        else:
+            pass
+
+    def offline(self):
+        if self.from_db:
+            pass
+        else:
+            pass
 
 
 class myUserMessage(models.Model):
@@ -33,6 +43,9 @@ class myUserMessage(models.Model):
     def __str__(self):
         return self.content
 
+    def send(self, username):
+        pass
+
 
 class myRoomMessage(models.Model):
     from_user = models.ManyToManyField('myUser')
@@ -43,6 +56,9 @@ class myRoomMessage(models.Model):
     def __str__(self):
         return self.content
 
+    def send(self):
+        pass
+
 
 class myRoom(models.Model):
     roomname = models.CharField(max_length=128, unique=True)
@@ -51,3 +67,6 @@ class myRoom(models.Model):
 
     def __str__(self):
         return self.roomname
+
+    def user_join(self):
+        pass
