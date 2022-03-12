@@ -1,3 +1,9 @@
+import re
+from hour84.models import myUser, myRoom
+import json
+from asgiref.sync import async_to_sync
+from django.core.cache import cache
+from channels.generic.websocket import WebsocketConsumer
 from select import select
 import django
 import os
@@ -5,14 +11,33 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE",
                       "H84.settings")  # project_name 项目名称
 django.setup()
 
-from channels.generic.websocket import WebsocketConsumer
-from django.core.cache import cache
-from asgiref.sync import async_to_sync
-import json
-from hour84.models import myUser, myRoom
-import re
+class online_user_list:
+    def __init__(self):
+        self.list = set()
+
+    def add(self, elem):
+        self.list.add(elem)
+
+    def remove(self, elem):
+        self.list.discard(elem)
+
+    def match(self, elem):
+        list_str = str(self.list)
+        # print(list_str)
+        res = re.findall("(?<=')[^, ]*?" + elem + ".*?(?=')", list_str)
+        return res
+
+    def __iter__(self):
+        return self.list.__iter__()
+
+    def __str__(self):
+        return str(self.list)
+    
+    def __len__(self):
+        return len(self.list)
 
 
+ONLINE_USER = online_user_list()
 
 class Chat(WebsocketConsumer):
     def __init__(self, *args, **kwargs):
@@ -62,14 +87,14 @@ class Chat(WebsocketConsumer):
             'status': False
         }
         same_name_user = myUser.objects.filter(username=data['username'])
-        if(len(same_name_user) != 0): #
+        if(len(same_name_user) != 0):
             if data['password'] == same_name_user[0].password:
                 resp['status'] = True
                 self.user = same_name_user[0]
             else:
                 resp['reason'] = 'Username duplicated or Password is not correct'
         else:
-            resp['status']  = True
+            resp['status'] = True
             if data['password'] != '':
                 self.user = myUser.objects.create(username=data['username'],
                                                   password=data['password'],
@@ -78,18 +103,19 @@ class Chat(WebsocketConsumer):
                 self.user = myUser()
                 self.user.username = data['username']
                 self.user.real_in_db = False
-        self.login_init()
+        if self.user:
+            self.login_init()
         self.send(json.dumps(resp))
 
     def login_init(self):
         print("login_init")
-        async_to_sync(self.channel_layer.group_add)(self.user.username,self.channel_name)
+        async_to_sync(self.channel_layer.group_add)(
+            self.user.username, self.channel_name)
         self.friends = set()
         self.rooms = set()
+        ONLINE_USER.add(self.user.username)
         if self.user.real_in_db:
             self.friends = set(self.user.get_friends())
-
-
 
     def search_event(self, data):
         print("search_event")
@@ -97,24 +123,25 @@ class Chat(WebsocketConsumer):
     def message_event(self, data):
         print("message_event")
         async_to_sync(self.channel_layer.group_send)(
-            data['_to'],{
-            'type': 'group_send_event',
-            'data': data,
-        })
+            data['_to'], {
+                'type': 'group_send_event',
+                'data': data,
+            })
 
     def load_userinfo_event(self, data):
         print("load_userinfo_event")
+        _len = len(ONLINE_USER)
         resp = {
-            'action':"load_userinfo",
+            'action': "load_userinfo",
             'userinfo': {
                 'username': self.user.username,
                 'real_in_db': self.user.real_in_db
             },
             'friends': json.dumps(list(self.friends)),
-            'rooms': json.dumps([])
+            'rooms': json.dumps([]),
+            'online_usernum':_len
         }
         self.send(json.dumps(resp))
-
 
     def list_operation_event(self, data):
         print("list_operation_event")

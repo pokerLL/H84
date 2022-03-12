@@ -370,3 +370,8 @@ textarea {
     right: 5%;
     position: absolute;
 }
+
+.index-info-message {
+    font-size: small;
+    color: red;
+}

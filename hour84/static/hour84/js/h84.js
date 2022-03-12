@@ -17,6 +17,7 @@ index_loginbtn.onclick = function() {
         password: index_password.value,
         setting: index_setting.value,
     }));
+    $('.index-info-message').text("");
 }
 
 function login_event(data) {
@@ -50,6 +51,7 @@ function load_userinfo_event(data) {
     friend_list.forEach(ele => {
         add_frined(ele);
     });
+    $(".app-online-usernum").text(data.online_usernum);
 }
 
 function add_frined(username) {
