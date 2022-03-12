@@ -83,7 +83,6 @@ function send_message(_from, _to, message) {
     }));
 
     add_messgae(_from, message);
-
 }
 
 function add_messgae(_from, message) {
@@ -92,10 +91,13 @@ function add_messgae(_from, message) {
         "<p>" + _from +" : "+ "</p>"
         + "<p>" + message + "</p>"
     )
-    chatobj = _from;
-    $('.app-chatobj-name').text(chatobj);
 }
 
+function change_chatobj(_obj){
+    chatobj = _obj;
+    $('.app-chatobj-name').text(_obj);
+
+}
 
 socket.onopen = function () {
     console.log('socket connect success');
@@ -128,8 +130,7 @@ socket.onclose = function () {
 $(document).on('click', '.chat-friend', function (e) {
     // console.log(e);
     _name = e.currentTarget.innerText;
-    chatobj = _name;
-    $('.app-chatobj-name').text(chatobj);
+    change_chatobj(_name);
 })
 
 $('.app-sendmsg-btn').click(function (e) {
