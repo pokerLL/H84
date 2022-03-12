@@ -10,7 +10,7 @@ var index_username = document.querySelector('[name="username"]'),
 var chatobj = '',
     user = '';
 
-index_loginbtn.onclick = function () {
+index_loginbtn.onclick = function() {
     socket.send(JSON.stringify({
         action: 'login',
         username: index_username.value,
@@ -45,7 +45,8 @@ function load_userinfo_event(data) {
         room_list = data.rooms;
     user = data.userinfo;
     var _uu = userinfo.username + ((userinfo.real_in_db) ? "(正式用户)" : "(匿名用户)");
-    document.querySelector('.app-username').innerText = _uu;
+    document.querySelector('.app-username').innerText = userinfo.username;
+    document.querySelector('.app-usertype').innerText = ((userinfo.real_in_db) ? "(正式用户)" : "(匿名用户)");
     friend_list.forEach(ele => {
         add_frined(ele);
     });
@@ -70,7 +71,7 @@ function search_event(data) {
 function message_event(data) {
     console.log(data);
     add_messgae(data['_from'], data['content']);
-    
+
 }
 
 function send_message(_from, _to, message) {
@@ -88,22 +89,22 @@ function send_message(_from, _to, message) {
 function add_messgae(_from, message) {
     console.log('add_messgae', _from, message);
     $(".app-msgs").append(
-        "<p>" + _from +" : "+ "</p>"
-        + "<p>" + message + "</p>"
+        "<p>" + _from + " : " + "</p>" +
+        "<p>" + message + "</p>"
     )
 }
 
-function change_chatobj(_obj){
+function change_chatobj(_obj) {
     chatobj = _obj;
     $('.app-chatobj-name').text(_obj);
 
 }
 
-socket.onopen = function () {
+socket.onopen = function() {
     console.log('socket connect success');
 }
 
-socket.onmessage = function (e) {
+socket.onmessage = function(e) {
     var data = JSON.parse(e.data);
     console.log(data);
     if (data.action === 'login') {
@@ -122,18 +123,19 @@ socket.onmessage = function (e) {
     }
 }
 
-socket.onclose = function () {
+socket.onclose = function() {
 
 
 }
 
-$(document).on('click', '.chat-friend', function (e) {
+$(document).on('click', '.chat-friend', function(e) {
     // console.log(e);
     _name = e.currentTarget.innerText;
     change_chatobj(_name);
 })
 
-$('.app-sendmsg-btn').click(function (e) {
+$('.app-sendmsg-btn').click(function(e) {
     var msg = $('textarea').val();
+    $('textarea').text("");
     send_message(user.username, chatobj, msg);
 })
