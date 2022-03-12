@@ -16,6 +16,7 @@ index_loginbtn.onclick = function () {
 }
 
 function login_event(data) {
+    console.log('login_event');
     if (data['status'] === true) {
         document.querySelector('.index').setAttribute('class', 'index whole-page hide');
         document.querySelector('.app').setAttribute('class', 'app whole-page');
@@ -37,7 +38,8 @@ function login_success() {
 function load_userinfo(data) {
     var userinfo = data.userinfo,
         friend_list = data.friend_list,
-        group_list = data.group_list;
+        room_list = data.room_list;
+        console.log(data);
 }
 
 function add_frined(username) {

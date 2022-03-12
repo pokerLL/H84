@@ -1,3 +1,4 @@
+from re import S
 from django.db import models
 
 # Create your models here.
@@ -19,6 +20,15 @@ class myUser(models.Model):
 
     def __str__(self):
         return self.username
+
+    def get_friends(self):
+        print('get_friends')
+        _friends = self.friends.values('username')
+        _ = []
+        for i in _friends:
+            _.append(i['username'])
+        return _
+
 
 
 class myUserMessage(models.Model):

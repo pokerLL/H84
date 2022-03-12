@@ -1,16 +1,16 @@
 // var HOST = '120.24.175.31:8000';
-var HOST = window.location.host;
+var HOST = '127.0.0.1:8000';
+var ignore_login = true;
 var socket = new WebSocket('ws://' + HOST + '/wss/chat/');
-var index_username = document.querySelector('.index-login-username'),
-    index_password = document.querySelector('.index-login-password'),
+var index_username = document.querySelector('[name="username"]'),
+    index_password = document.querySelector('[name="password"]'),
     index_setting = document.querySelector('[name="setting"]'),
-    index_loginbtn = document.querySelector('.index-login-btn');
+    index_loginbtn = document.querySelector('.index-login-btn'),
+    app_userlist = document.querySelector('.app-userlist');
+var chatobj = '',
+    user = '';
 
 index_loginbtn.onclick = function () {
-    console.log(index_username);
-    console.log(index_password);
-    console.log(index_setting);
-    // console.log(index_loginbtn.innerHTML);
     socket.send(JSON.stringify({
         action: 'login',
         username: index_username.value,
@@ -20,15 +20,11 @@ index_loginbtn.onclick = function () {
 }
 
 function login_event(data) {
+    console.log('login_event');
     if (data['status'] === true) {
         document.querySelector('.index').setAttribute('class', 'index whole-page hide');
         document.querySelector('.app').setAttribute('class', 'app whole-page');
-        if (data['action'] === '"anonymous_login"') {
-            alert('welcome..\nregister success');
-        } else {
-            alert('welcome..\nlogin success')
-        }
-
+        alert('login success');
         login_success();
     } else {
         document.querySelector('.index-info-message').innerText = data['reason'];
@@ -37,20 +33,26 @@ function login_event(data) {
 
 function login_success() {
     socket.send(JSON.stringify({
-        action: 'load_userinfo',
-        username: index_username,
+        action: 'load_userinfo'
     }));
 }
 
 // userinfo friend_list group_list
 function load_userinfo_event(data) {
+    print("load_userinfo_event");
     var userinfo = data.userinfo,
-        friend_list = data.friend_list,
-        group_list = data.group_list;
+        friend_list = JSON.parse(data.friends),
+        room_list = data.rooms;
+    user = data.userinfo;
+    var _uu = userinfo.username + ((userinfo.real_in_db) ? "(正式用户)" : "(匿名用户)");
+    document.querySelector('.app-username').innerText = _uu;
+    friend_list.forEach(ele => {
+        add_frined(ele);
+    });
 }
 
 function add_frined(username) {
-
+    $('.app-userlist').append("<button class='chat-friend'>" + username + "</button>");
 }
 
 function add_group(roomname) {
@@ -66,7 +68,32 @@ function search_event(data) {
 }
 
 function message_event(data) {
+    console.log(data);
+    add_messgae(data['_from'], data['content']);
+    
+}
 
+function send_message(_from, _to, message) {
+    console.log(_from, "->", _to, " : ", message);
+    socket.send(JSON.stringify({
+        'action': "message",
+        '_from': _from,
+        '_to': _to,
+        'content': message
+    }));
+
+    add_messgae(_from, message);
+
+}
+
+function add_messgae(_from, message) {
+    console.log('add_messgae', _from, message);
+    $(".app-msgs").append(
+        "<p>" + _from +" : "+ "</p>"
+        + "<p>" + message + "</p>"
+    )
+    chatobj = _from;
+    $('.app-chatobj-name').text(chatobj);
 }
 
 
@@ -77,16 +104,19 @@ socket.onopen = function () {
 socket.onmessage = function (e) {
     var data = JSON.parse(e.data);
     console.log(data);
-    if (data.action === 'login' || data.action === 'anonymous_login') {
+    if (data.action === 'login') {
         login_event(data);
-    } else if (data.action === 'register') {
+    } else if (data.action == 'register') {
         register_event(data);
     } else if (data.action === 'search') {
         search_event(data);
     } else if (data.action === 'message') {
         message_event(data);
-    } else if (data.action === 'load_user_info') {
+    } else if (data.action == 'load_userinfo') {
         load_userinfo_event(data);
+    } else {
+        console.log('router wrong....');
+        console.log(data);
     }
 }
 
@@ -94,3 +124,15 @@ socket.onclose = function () {
 
 
 }
+
+$(document).on('click', '.chat-friend', function (e) {
+    // console.log(e);
+    _name = e.currentTarget.innerText;
+    chatobj = _name;
+    $('.app-chatobj-name').text(chatobj);
+})
+
+$('.app-sendmsg-btn').click(function (e) {
+    var msg = $('textarea').val();
+    send_message(user.username, chatobj, msg);
+})

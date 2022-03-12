@@ -6,8 +6,7 @@
     <meta charset="utf-8" />
     <title></title>
     <link rel="stylesheet" href="{% static 'hour84/css/h84.css' %}">
-    <!-- <link rel="stylesheet" href="../../static/hour84/css/h84.css"> -->
-
+    <script src="{%static 'hour84/js/jquery.js'%}"></script>
 
 </head>
 
@@ -32,7 +31,7 @@
             <div class="app-left-pane-top">
                 <div class="app-left-pane-top-userinfo">
                     <img src="../../static/hour84/img/tx.jpg" class="app-left-pane-top-userinfo-userpic">
-                    <div class="app-left-pane-top-userinfo-username">poker(正式)</div>
+                    <div class="app-left-pane-top-userinfo-username app-username">poker(正式)</div>
                 </div>
                 <div class="app-left-pane-top-search">
                     <input name="search" class="app-left-pane-top-searcher" placeholder="搜索" />
@@ -43,7 +42,10 @@
                     <button>好友</button>
                     <button style="left: 50%;top: 0%;">群聊</button>
                 </div>
-                <div class="app-left-pane-bottom-body">
+                <div class="app-left-pane-bottom-body app-list">
+                    <div class="app-left-pane-bottom-body-body app-userlist">
+                    </div>
+                    <div class="app-left-pane-bottom-body-body app-roomlist hide"></div>
                 </div>
                 <div class="app-left-pane-bottom-bottom">
                     <div class="app-left-pane-bottom-bottom-info">
@@ -55,20 +57,18 @@
         </div>
         <div class="app-right-pane">
             <div class="app-right-pane-top">
-                <div class="app-right-pane-top-roominfo">
+                <div class="app-right-pane-top-roominfo app-chatobj-name">
                     ROOM1
                 </div>
             </div>
-            <div class="app-right-pane-body">
-
+            <div class="app-right-pane-body app-msgs">
             </div>
             <div class="app-right-pane-bottom">
                 <textarea></textarea>
-                <button>发送</button>
+                <button class="app-sendmsg-btn">发送</button>
             </div>
         </div>
     </div>
-    <script src='{% static 'hour84/js/h84.js' %}'></script>
+    <script src="{% static 'hour84/js/h84.js' %}"></script>
 </body>
-
 </html>
