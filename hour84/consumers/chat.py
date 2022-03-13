@@ -1,3 +1,10 @@
+from socket import socket
+import django
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE",
+                      "H84.settings")  # project_name 项目名称
+django.setup()
+
 import re
 from hour84.models import myUser, myRoom
 import json
@@ -5,11 +12,7 @@ from asgiref.sync import async_to_sync
 from django.core.cache import cache
 from channels.generic.websocket import WebsocketConsumer
 from select import select
-import django
-import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE",
-                      "H84.settings")  # project_name 项目名称
-django.setup()
+
 
 class online_user_list:
     def __init__(self):
@@ -23,7 +26,6 @@ class online_user_list:
 
     def match(self, elem):
         list_str = str(self.list)
-        # print(list_str)
         res = re.findall("(?<=')[^, ]*?" + elem + ".*?(?=')", list_str)
         return res
 
@@ -50,6 +52,8 @@ class Chat(WebsocketConsumer):
 
     def disconnect(self, close_code):
         print('disconnect...', close_code)
+        if self.user:
+            ONLINE_USER.remove(self.user.username)
 
     def group_send_event(self, event):
         data = event['data']
@@ -119,6 +123,12 @@ class Chat(WebsocketConsumer):
 
     def search_event(self, data):
         print("search_event")
+        print(data)
+        _list = ONLINE_USER.match(data['content'])
+        self.send(json.dumps({
+            'action':'search',
+            'match_list':json.dumps(_list)
+        }))
 
     def message_event(self, data):
         print("message_event")
@@ -130,6 +140,7 @@ class Chat(WebsocketConsumer):
 
     def load_userinfo_event(self, data):
         print("load_userinfo_event")
+        print(ONLINE_USER)
         _len = len(ONLINE_USER)
         resp = {
             'action': "load_userinfo",

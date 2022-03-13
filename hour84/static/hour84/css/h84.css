@@ -5,7 +5,7 @@
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    /* background: url(https://gimg2.baidu.com/image_search/src=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_match%2F0%2F11695386033%2F0.jpg&refer=http%3A%2F%2Finews.gtimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1649431904&t=58778d0de34f6296713888e7212fd184); */
+    background: url(https://gimg2.baidu.com/image_search/src=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_match%2F0%2F11695386033%2F0.jpg&refer=http%3A%2F%2Finews.gtimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1649431904&t=58778d0de34f6296713888e7212fd184);
 }
 
 .vcenter {
@@ -16,7 +16,6 @@
 }
 
 .login {
-    /* background-color: red; */
     width: 30%;
     height: 30%;
 }
@@ -32,7 +31,6 @@
     left: 0%;
     top: 0%;
     position: absolute;
-    /* border: orangered 5px solid; */
 }
 
 .app-left-pane-top {
@@ -41,7 +39,6 @@
     top: 0%;
     left: 0%;
     position: absolute;
-    /* background-color: grey; */
 }
 
 .app-left-pane-top-search {
@@ -50,12 +47,12 @@
     bottom: 0%;
     left: 0%;
     position: absolute;
-    /* background-color: aliceblue; */
 }
 
 .app-left-pane-bottom-top-input {
     width: 70%;
     height: 70%;
+    border-radius: 5px;
 }
 
 .app-left-pane-bottom-top-btn {
@@ -63,13 +60,14 @@
     float: right;
     margin-right: 5px;
     cursor: pointer;
+    border-radius: 5px;
+    width: 20%;
 }
 
 .app-left-pane-bottom-bottom {
     bottom: 0%;
     width: 100%;
     position: absolute;
-    /* background-color: darkmagenta; */
 }
 
 .app-left-pane-bottom-bottom-info {
@@ -83,7 +81,6 @@
     top: 30%;
     left: 0%;
     position: absolute;
-    /* background-color: brown; */
 }
 
 .app-right-pane {
@@ -93,7 +90,6 @@
     left: 20%;
     top: 0%;
     position: absolute;
-    /* border: red 5px solid; */
 }
 
 .app-right-pane-top {
@@ -119,7 +115,6 @@
     top: 15%;
     left: 0%;
     position: absolute;
-    /* background-color: chocolate; */
     overflow-x: auto;
     word-wrap: break-word;
 }
@@ -143,16 +138,6 @@ textarea {
     box-sizing: border-box;
 }
 
-.whole-page {
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    /* background: url(https://gimg2.baidu.com/image_search/src=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_match%2F0%2F11695386033%2F0.jpg&refer=http%3A%2F%2Finews.gtimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1649431904&t=58778d0de34f6296713888e7212fd184); */
-}
-
 .vcenter {
     position: relative;
     top: 50%;
@@ -161,7 +146,6 @@ textarea {
 }
 
 .login {
-    /* background-color: red; */
     width: 30%;
     height: 30%;
 }
@@ -176,6 +160,7 @@ textarea {
     height: 25%;
     border: 1px solid orange;
     margin: 2px;
+    border-radius: 5px;
 }
 
 .hide {
@@ -189,7 +174,6 @@ textarea {
     left: 0%;
     top: 0%;
     position: absolute;
-    /* border: orangered 5px solid; */
 }
 
 .app-left-pane-top {
@@ -198,7 +182,6 @@ textarea {
     top: 0%;
     left: 0%;
     position: absolute;
-    /* background-color: grey; */
 }
 
 .app-left-pane-top-userinfo-userpic {
@@ -222,7 +205,6 @@ textarea {
     bottom: 0%;
     left: 0%;
     position: absolute;
-    /* background-color: aliceblue; */
 }
 
 .app-left-pane-top-searcher {
@@ -233,7 +215,6 @@ textarea {
 .app-left-pane-bottom-top {
     width: 100%;
     height: 10%;
-    background-color: greenyellow;
     left: 0%;
     top: 0%;
     position: absolute;
@@ -244,6 +225,7 @@ textarea {
     height: 100%;
     float: left;
     cursor: pointer;
+    border-radius: 5px;
 }
 
 .app-left-pane-bottom-body {
@@ -265,7 +247,6 @@ textarea {
     bottom: 0%;
     width: 100%;
     position: absolute;
-    /* background-color: darkmagenta; */
 }
 
 .app-left-pane-bottom-bottom-info {
@@ -279,7 +260,6 @@ textarea {
     top: 30%;
     left: 0%;
     position: absolute;
-    /* background-color: brown; */
 }
 
 .app-right-pane {
@@ -289,7 +269,6 @@ textarea {
     left: 20%;
     top: 0%;
     position: absolute;
-    /* border: red 5px solid; */
 }
 
 .app-right-pane-top {
@@ -316,7 +295,6 @@ textarea {
     top: 15%;
     left: 0%;
     position: absolute;
-    /* background-color: chocolate; */
     overflow-x: auto;
     word-wrap: break-word;
 }
@@ -343,6 +321,7 @@ textarea {
     right: 0%;
     position: absolute;
     cursor: pointer;
+    border-radius: 5px;
 }
 
 input {
@@ -374,4 +353,30 @@ textarea {
 .index-info-message {
     font-size: small;
     color: red;
+}
+
+.app-message {
+    margin-top: 5px;
+    position: relative;
+}
+
+.app-message>img {
+    width: 50px;
+    border-radius: 50%;
+    left: 10px;
+    position: relative;
+}
+
+.app-message-top-userinfo {
+    position: absolute;
+    top: 5px;
+    left: 70px;
+    font-size: large;
+}
+
+.app-message-content {
+    left: 70px;
+    position: absolute;
+    font-size: medium;
+    top: 30px;
 }

@@ -1,23 +1,25 @@
 // var HOST = '120.24.175.31:8000';
-var HOST = '127.0.0.1:8000';
-var ignore_login = true;
+// var HOST = '127.0.0.1:8000';
+var HOST = window.location.host;
+var has_login = false;
 var socket = new WebSocket('ws://' + HOST + '/wss/chat/');
 var index_username = document.querySelector('[name="username"]'),
     index_password = document.querySelector('[name="password"]'),
     index_setting = document.querySelector('[name="setting"]'),
-    index_loginbtn = document.querySelector('.index-login-btn'),
-    app_userlist = document.querySelector('.app-userlist');
+    app_userlist = document.querySelector('.app-userlist'),
+    index_login_btn = $('.index-login-btn'),
+    app_search_input = $('.app-left-pane-bottom-top-input'),
+    app_search_btn = $('.app-left-pane-bottom-top-btn'),
+    app_left_userbtn = $('.app-left-userbtn'),
+    app_left_roombtn = $('.app-left-roombtn');
 var chatobj = '',
     user = '';
 
-index_loginbtn.onclick = function() {
+function login_success() {
+    has_login = true;
     socket.send(JSON.stringify({
-        action: 'login',
-        username: index_username.value,
-        password: index_password.value,
-        setting: index_setting.value,
+        action: 'load_userinfo'
     }));
-    $('.index-info-message').text("");
 }
 
 function login_event(data) {
@@ -32,15 +34,9 @@ function login_event(data) {
     }
 }
 
-function login_success() {
-    socket.send(JSON.stringify({
-        action: 'load_userinfo'
-    }));
-}
 
-// userinfo friend_list group_list
 function load_userinfo_event(data) {
-    print("load_userinfo_event");
+    console.log("load_userinfo_event");
     var userinfo = data.userinfo,
         friend_list = JSON.parse(data.friends),
         room_list = data.rooms;
@@ -49,17 +45,30 @@ function load_userinfo_event(data) {
     document.querySelector('.app-username').innerText = userinfo.username;
     document.querySelector('.app-usertype').innerText = ((userinfo.real_in_db) ? "(正式用户)" : "(匿名用户)");
     friend_list.forEach(ele => {
-        add_frined(ele);
+        add_listitem(ele, 'user');
     });
     $(".app-online-usernum").text(data.online_usernum);
 }
 
-function add_frined(username) {
-    $('.app-userlist').append("<button class='chat-friend'>" + username + "</button>");
-}
-
-function add_group(roomname) {
-
+function add_listitem(_itemname, _listname) {
+    if (_listname === 'user') {
+        _list = $('.app-userlist');
+        if (_list.has('#user-' + _itemname).length === 0) {
+            _list.append("<button class='chat-item' id='user-%d'>".replace("%d", _itemname) + _itemname + "</button>");
+        }
+    } else if (_listname === 'room') {
+        _list = $('.app-roomlist');
+        if (_list.has('#room-' + _itemname).length === 0) {
+            _list.append("<button class='chat-item' id='room-%d'>".replace("%d", _itemname) + _itemname + "</button>");
+        }
+    } else if (_listname === 'search') {
+        _list = $('.app-searchlist');
+        if (_list.has('#search-' + _itemname).length === 0) {
+            _list.append("<button class='chat-item' id='search-%d'>".replace("%d", _itemname) + _itemname + "</button>");
+        }
+    } else {
+        console.log("add_listitem wrong :", _listname);
+    }
 }
 
 function register_event(data) {
@@ -67,13 +76,20 @@ function register_event(data) {
 }
 
 function search_event(data) {
-
+    console.log("search_event");
+    match_list = JSON.parse(data['match_list']);
+    $('.app-searchlist').html(`<h3>搜索结果：</h3>`);
+    match_list.forEach(ele => {
+        console.log(ele);
+        add_listitem(ele, 'search');
+    })
+    $('.app-left-list').hide();
+    $('.app-searchlist').show();
 }
 
 function message_event(data) {
-    console.log(data);
-    add_messgae(data['_from'], data['content']);
-
+    console.log('message_event');
+    add_messgae(data['_from'], data['content'], data['_from']);
 }
 
 function send_message(_from, _to, message) {
@@ -84,22 +100,29 @@ function send_message(_from, _to, message) {
         '_to': _to,
         'content': message
     }));
-
-    add_messgae(_from, message);
+    add_messgae(_from, message, _to);
 }
 
-function add_messgae(_from, message) {
+function add_messgae(_from, message, _pane) {
+    var msg = `<div class="app-message">
+    <img src="../../static/hour84/img/tx.jpg">
+    <div class="app-message-top-userinfo">%s</div>%m<hr/>
+</div>`;
     console.log('add_messgae', _from, message);
-    $(".app-msgs").append(
-        "<p>" + _from + " : " + "</p>" +
-        "<p>" + message + "</p>"
-    )
+    var panname = 'message-pane-%d'.replace("%d", _pane);
+    $('#' + panname).append(msg.replace("%s", _from).replace("%m", message));
 }
 
 function change_chatobj(_obj) {
     chatobj = _obj;
     $('.app-chatobj-name').text(_obj);
-
+    var panname = 'message-pane-%d'.replace("%d", _obj);
+    if ($("#" + panname).length == 0) {
+        $(".app-right-pane-body").append(`<div class="message-pane" id="message-pane-%d"></div>`.replace("%d", _obj));
+        $("#" + panname).hide();
+    }
+    $('.message-pane').hide();
+    $('#' + panname).show();
 }
 
 socket.onopen = function() {
@@ -121,23 +144,68 @@ socket.onmessage = function(e) {
         load_userinfo_event(data);
     } else {
         console.log('router wrong....');
-        console.log(data);
+        // console.log(data);
     }
 }
 
 socket.onclose = function() {
 
-
 }
 
-$(document).on('click', '.chat-friend', function(e) {
-    // console.log(e);
-    _name = e.currentTarget.innerText;
-    change_chatobj(_name);
+$(document).on('click', '.chat-item', function(e) {
+    console.log(e);
+    e = e.currentTarget;
+    change_chatobj(e.innerText);
+    if (e.id.startsWith('search')) {
+        add_listitem(e.innerText, 'user');
+    }
 })
 
 $('.app-sendmsg-btn').click(function(e) {
     var msg = $('textarea').val();
-    $('textarea').text("");
-    send_message(user.username, chatobj, msg);
+    // console.log(msg);
+    if (msg.length > 2 && chatobj != '') {
+        $('textarea').val("");
+        send_message(user.username, chatobj, msg);
+    }
 })
+
+$(document).keydown(function(e) {
+    // console.log(e.keyCode);
+    if (e.keyCode === 13) {
+        has_login ? $('.app-sendmsg-btn').click() : $('.index-login-btn').click();
+    }
+});
+
+index_login_btn.click(function() {
+    socket.send(JSON.stringify({
+        action: 'login',
+        username: index_username.value,
+        password: index_password.value,
+        setting: index_setting.value,
+    }));
+    $('.index-info-message').text("");
+});
+
+app_search_btn.click(function() {
+    var search_value = app_search_input.val();
+    if (search_value.length > 0) {
+        app_search_input.val("");
+        socket.send(JSON.stringify({
+            'action': 'search',
+            'content': search_value,
+        }));
+    } else {
+        alert('请输入内容再搜索');
+    }
+});
+
+app_left_userbtn.click(function() {
+    $('.app-left-list').hide();
+    $('.app-userlist').show();
+});
+
+app_left_roombtn.click(function() {
+    $('.app-left-list').hide();
+    $('.app-roomlist').show();
+});

@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <title></title>
     <link rel="stylesheet" href="{% static 'hour84/css/h84.css' %}">
-    <script src="{%static 'hour84/js/jquery.js'%}"></script>
+    <script src="{%static 'hour84/js/jquery.min.js'%}"></script>
 
 </head>
 
@@ -30,24 +30,24 @@
         <div class="app-left-pane">
             <div class="app-left-pane-top">
                 <div class="app-left-pane-top-userinfo">
-                    <img src="../../static/hour84/img/tx.jpg" class="app-left-pane-top-userinfo-userpic">
+                    <img src="{% static 'hour84/img/tx.jpg' %}" class="app-left-pane-top-userinfo-userpic">
                     <div class="app-left-pane-top-userinfo-username app-username">用户名</div>
                     <div class="app-usertype">正式用户</div>
                 </div>
                 <div class="app-left-pane-top-search">
-                    <input name="search" class="app-left-pane-bottom-top-input" placeholder="搜索" />
+                    <input name="search" class="app-left-pane-bottom-top-input" placeholder="搜索在线用户..." />
                     <button class="app-left-pane-bottom-top-btn">确定</button>
                 </div>
             </div>
             <div class="app-left-pane-bottom">
                 <div class="app-left-pane-bottom-top">
-                    <button>好友</button>
-                    <button style="left: 50%;top: 0%;">群聊</button>
+                    <button class="app-left-userbtn">好友</button>
+                    <button class="app-left-roombtn" style="left: 50%;top: 0%;">群聊</button>
                 </div>
                 <div class="app-left-pane-bottom-body app-list">
-                    <div class="app-left-pane-bottom-body-body app-userlist">
-                    </div>
-                    <div class="app-left-pane-bottom-body-body app-roomlist hide"></div>
+                    <div class="app-left-pane-bottom-body-body app-left-list app-userlist"></div>
+                    <div class="app-left-pane-bottom-body-body app-left-list app-roomlist"></div>
+                    <div class="app-left-pane-bottom-body-body app-left-list app-searchlist"></div>
                 </div>
                 <div class="app-left-pane-bottom-bottom">
                     <div class="app-left-pane-bottom-bottom-info">
@@ -60,15 +60,18 @@
 
         </div>
         <div class="app-right-pane">
-            <div class="app-right-pane-top">
-                <p class="app-chatobj-name">ROOM</p>
+            <div class="app-message-pane">
+                <div class="app-right-pane-top">
+                    <p class="app-chatobj-name">ROOM</p>
+                </div>
+                <div class="app-right-pane-body">
+                </div>
+                <div class="app-right-pane-bottom">
+                    <textarea placeholder="在这里输入你想发送的信息..."></textarea>
+                    <button class="app-sendmsg-btn">发送</button>
+                </div>
             </div>
-            <div class="app-right-pane-body app-msgs">
-            </div>
-            <div class="app-right-pane-bottom">
-                <textarea></textarea>
-                <button class="app-sendmsg-btn">发送</button>
-            </div>
+
         </div>
     </div>
     <script src="{% static 'hour84/js/h84.js' %}"></script>
