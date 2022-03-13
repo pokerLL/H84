@@ -333,7 +333,7 @@ textarea {
     resize: none;
 }
 
-.chat-friend {
+.chat-item {
     left: 10%;
     width: 100%;
     font-size: large;
@@ -379,4 +379,9 @@ textarea {
     position: absolute;
     font-size: medium;
     top: 30px;
+}
+
+.app-roomlist>h3 {
+    text-align: center;
+    cursor: pointer;
 }

@@ -75,9 +75,11 @@ class Chat(WebsocketConsumer):
             self.load_userinfo_event(data)
         elif action == 'list_operation':
             self.list_operation_event(data)
+        elif action == 'join_room':
+            self.join_room_event(data)
         else:
             async_to_sync(self.channel_layer.group_send)(
-                self.user.username,
+                'user-'+self.user.username,
                 {
                     'type': 'group_send_event',
                     'data': data,
@@ -114,7 +116,7 @@ class Chat(WebsocketConsumer):
     def login_init(self):
         print("login_init")
         async_to_sync(self.channel_layer.group_add)(
-            self.user.username, self.channel_name)
+            'user-'+self.user.username, self.channel_name)
         self.friends = set()
         self.rooms = set()
         ONLINE_USER.add(self.user.username)
@@ -133,14 +135,14 @@ class Chat(WebsocketConsumer):
     def message_event(self, data):
         print("message_event")
         async_to_sync(self.channel_layer.group_send)(
-            data['_to'], {
+            data['_type']+'-'+data['_to'], {
                 'type': 'group_send_event',
                 'data': data,
             })
 
     def load_userinfo_event(self, data):
         print("load_userinfo_event")
-        print(ONLINE_USER)
+        print('online :',ONLINE_USER)
         _len = len(ONLINE_USER)
         resp = {
             'action': "load_userinfo",
@@ -162,3 +164,8 @@ class Chat(WebsocketConsumer):
 
     def list_update(self):
         print("list_update")
+
+    def join_room_event(self,data):
+        print('join_room_event')
+        print(data)
+        async_to_sync(self.channel_layer.group_add)('room-'+data['roomname'],self.channel_name)
