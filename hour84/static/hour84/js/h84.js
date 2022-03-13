@@ -3,15 +3,27 @@
 var HOST = window.location.host;
 var has_login = false;
 var socket = new WebSocket('ws://' + HOST + '/wss/chat/');
-var index_username = document.querySelector('[name="username"]'),
-    index_password = document.querySelector('[name="password"]'),
-    index_setting = document.querySelector('[name="setting"]'),
-    app_userlist = document.querySelector('.app-userlist'),
-    index_login_btn = $('.index-login-btn'),
-    app_search_input = $('.app-left-pane-bottom-top-input'),
-    app_search_btn = $('.app-left-pane-bottom-top-btn'),
-    app_left_userbtn = $('.app-left-userbtn'),
-    app_left_roombtn = $('.app-left-roombtn');
+var index_page = '.index',
+    index_username = '[name="username"]',
+    index_password = '[name="password"]',
+    index_setting = '[name="setting"]',
+    index_login_btn = '.index-login-btn',
+    index_info_message = '.index-info-message';
+
+var app_page = '.app',
+    app_search_input = '.app-left-pane-bottom-top-input',
+    app_search_btn = '.app-left-pane-bottom-top-btn',
+    app_left_userbtn = '.app-left-userbtn',
+    app_left_roombtn = '.app-left-roombtn',
+    app_username = '.app-username',
+    app_usertype = '.app-usertype',
+    app_online_usernum = ".app-online-usernum",
+    app_leftlist = '.app-left-list',
+    app_userlist = '.app-userlist',
+    app_roomlist = '.app-roomlist',
+    app_searchlist = '.app-searchlist',
+    app_chatobj_name = '.app-chatobj-name';
+
 var chatobj = '',
     user = '';
 
@@ -25,12 +37,12 @@ function login_success() {
 function login_event(data) {
     console.log('login_event');
     if (data['status'] === true) {
-        document.querySelector('.index').setAttribute('class', 'index whole-page hide');
-        document.querySelector('.app').setAttribute('class', 'app whole-page');
+        $(index_page).hide();
+        $(app_page).show();
         alert('login success');
         login_success();
     } else {
-        document.querySelector('.index-info-message').innerText = data['reason'];
+        $(index_info_message).text(data['reason']);
     }
 }
 
@@ -42,27 +54,27 @@ function load_userinfo_event(data) {
         room_list = data.rooms;
     user = data.userinfo;
     var _uu = userinfo.username + ((userinfo.real_in_db) ? "(正式用户)" : "(匿名用户)");
-    document.querySelector('.app-username').innerText = userinfo.username;
-    document.querySelector('.app-usertype').innerText = ((userinfo.real_in_db) ? "(正式用户)" : "(匿名用户)");
+    $(app_username).text(userinfo.username);
+    $(app_usertype).text((userinfo.real_in_db) ? "(正式用户)" : "(匿名用户)");
+    $(app_online_usernum).text(data.online_usernum);
     friend_list.forEach(ele => {
         add_listitem(ele, 'user');
     });
-    $(".app-online-usernum").text(data.online_usernum);
 }
 
 function add_listitem(_itemname, _listname) {
     if (_listname === 'user') {
-        _list = $('.app-userlist');
+        _list = $(app_userlist);
         if (_list.has('#user-' + _itemname).length === 0) {
             _list.append("<button class='chat-item' id='user-%d'>".replace("%d", _itemname) + _itemname + "</button>");
         }
     } else if (_listname === 'room') {
-        _list = $('.app-roomlist');
+        _list = $(app_roomlist);
         if (_list.has('#room-' + _itemname).length === 0) {
             _list.append("<button class='chat-item' id='room-%d'>".replace("%d", _itemname) + _itemname + "</button>");
         }
     } else if (_listname === 'search') {
-        _list = $('.app-searchlist');
+        _list = $(app_searchlist);
         if (_list.has('#search-' + _itemname).length === 0) {
             _list.append("<button class='chat-item' id='search-%d'>".replace("%d", _itemname) + _itemname + "</button>");
         }
@@ -71,20 +83,17 @@ function add_listitem(_itemname, _listname) {
     }
 }
 
-function register_event(data) {
-
-}
 
 function search_event(data) {
     console.log("search_event");
     match_list = JSON.parse(data['match_list']);
-    $('.app-searchlist').html(`<h3>搜索结果：</h3>`);
+    $(app_searchlist).html(`<h3>搜索结果：</h3>`);
     match_list.forEach(ele => {
         console.log(ele);
         add_listitem(ele, 'search');
-    })
-    $('.app-left-list').hide();
-    $('.app-searchlist').show();
+    });
+    $(app_leftlist).hide();
+    $(app_searchlist).show();
 }
 
 function message_event(data) {
@@ -115,13 +124,13 @@ function add_messgae(_from, message, _pane) {
 
 function change_chatobj(_obj) {
     chatobj = _obj;
-    $('.app-chatobj-name').text(_obj);
+    $(app_chatobj_name).text(_obj);
     var panname = 'message-pane-%d'.replace("%d", _obj);
     if ($("#" + panname).length == 0) {
         $(".app-right-pane-body").append(`<div class="message-pane" id="message-pane-%d"></div>`.replace("%d", _obj));
         $("#" + panname).hide();
     }
-    $('.message-pane').hide();
+    $(message_pane).hide();
     $('#' + panname).show();
 }
 
@@ -177,20 +186,20 @@ $(document).keydown(function(e) {
     }
 });
 
-index_login_btn.click(function() {
+$(index_login_btn).click(function() {
     socket.send(JSON.stringify({
         action: 'login',
-        username: index_username.value,
-        password: index_password.value,
-        setting: index_setting.value,
+        username: $(index_username).val(),
+        password: $(index_password).val(),
+        setting: $(index_setting).val(),
     }));
-    $('.index-info-message').text("");
+    $(index_info_message).text("");
 });
 
-app_search_btn.click(function() {
-    var search_value = app_search_input.val();
+$(app_search_btn).click(function() {
+    var search_value = $(app_search_input).val();
     if (search_value.length > 0) {
-        app_search_input.val("");
+        $(app_search_input).val("");
         socket.send(JSON.stringify({
             'action': 'search',
             'content': search_value,
@@ -200,12 +209,12 @@ app_search_btn.click(function() {
     }
 });
 
-app_left_userbtn.click(function() {
-    $('.app-left-list').hide();
-    $('.app-userlist').show();
+$(app_left_userbtn).click(function() {
+    $(app_leftlist).hide();
+    $(app_userlist).show();
 });
 
-app_left_roombtn.click(function() {
-    $('.app-left-list').hide();
-    $('.app-roomlist').show();
+$(app_left_roombtn).click(function() {
+    $(app_leftlist).hide();
+    $(app_roomlist).show();
 });
