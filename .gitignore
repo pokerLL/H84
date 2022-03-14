@@ -4,4 +4,4 @@
 .vscode/*
 *.rdb
 migrations/*
-!*/__init.py
+!__init__.py
