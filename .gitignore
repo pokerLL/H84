@@ -3,5 +3,5 @@
 .idea/*
 .vscode/*
 *.rdb
-migrations/*
-!__init__.py
+*/migrations/*
+!**/__init__.py
