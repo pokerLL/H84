@@ -178,7 +178,7 @@ class Chat(WebsocketConsumer):
     def search_event(self, data):
         print("search_event")
         print(data)
-        _list = onlineUserOperate('match',data['content'])
+        _list = self.onlineUserOperate('match',data['content'])
         self.send(json.dumps({
             'action':'search',
             'match_list':json.dumps(_list)
