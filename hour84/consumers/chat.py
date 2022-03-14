@@ -46,20 +46,11 @@ class Chat(WebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.user = None
 
-    def onlineUserUpdateEvent(self, action, elem):
-        self.send(json.dumps({
-            'action': 'online_user_update',
-            '_type': action,
-            'elem': elem
-        }))
-
     def onlineUserOperate(self,action,elem):
         if action == 'remove':
             ONLINE_USER.remove(elem)
-            self.onlineUserUpdateEvent(action,elem)
         elif action =='add':
             ONLINE_USER.add(elem)
-            self.onlineUserUpdateEvent(action,elem)
         elif action == 'match':
             return ONLINE_USER.match(data['content'])
         else:
@@ -136,6 +127,7 @@ class Chat(WebsocketConsumer):
 
     def login_init(self):
         print("login_init")
+	async_to_sync(self.channel_layer.group_add)('ONLINE_USER',self.channel_name)
         async_to_sync(self.channel_layer.group_add)(
             'user-'+self.user.username, self.channel_name)
         self.friends = set()
