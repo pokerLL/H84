@@ -68,7 +68,8 @@ class Chat(WebsocketConsumer):
                 'type':'group_send_event',
                 'data':{
                     'action':'online_user_update',
-                    '_type':'user_offline'
+                    '_type':'user_offline',
+                    'username':elem,
                 }
             })
         elif action =='add':
@@ -90,7 +91,8 @@ class Chat(WebsocketConsumer):
                 'type':'group_send_event',
                 'data':{
                     'action':'online_user_update',
-                    '_type':'user_online'
+                    '_type':'user_online',
+                    'username':elem,
                 }
             })
         elif action == 'match':
