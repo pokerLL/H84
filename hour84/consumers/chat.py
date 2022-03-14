@@ -94,7 +94,7 @@ class Chat(WebsocketConsumer):
                 }
             })
         elif action == 'match':
-            return ONLINE_USER.match(data['content'])
+            return ONLINE_USER.match(elem)
         else:
             print(action ,' operation to ONLINE_USER_SET : wrong')
 
