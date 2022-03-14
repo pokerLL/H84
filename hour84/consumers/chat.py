@@ -40,6 +40,7 @@ class online_user_list:
         return res
 
     def is_anonymous(self, elem):
+        print(elem, " is_anonymous : ", (elem in self.list1))
         return (elem in self.list1)
 
     def __iter__(self):
@@ -123,6 +124,7 @@ class Chat(WebsocketConsumer):
         print('disconnect...', close_code)
         if self.user:
             self.onlineUserOperate('remove', self.user.username)
+            # async_to_sync(self.channel_layer.group_discard)()
 
     def group_send_event(self, event):
         data = event['data']
@@ -205,9 +207,15 @@ class Chat(WebsocketConsumer):
 
     def message_event(self, data):
         print("message_event")
-        if data['_type'] =='user':
-            if self.user.real_in_db and self.onlineUserOperate('is_annoymous', data['_to']):
-                myUserMessage.objects.create(from_user__username=data['_from'],to_user__username=data['_to'],content=data['content'])
+        if data['_type'] == 'user':
+            if self.user.real_in_db and not self.onlineUserOperate('is_anonymous', data['_to']):
+                print('save user message')
+                myUserMessage.objects.create(
+                    from_user=self.user, to_user=myUser.objects.get(username=data['_to']), content=data['content'])
+        elif data['_type'] == 'room':
+            if self.user.username == data['_from'] and self.user.real_in_db:
+                myRoomMessage.objects.create(
+                    from_user=self.user, to_room=myRoom.objects.get(roomname=data['_to']), content=data['content'])
 
         async_to_sync(self.channel_layer.group_send)(
             data['_type']+'-'+data['_to'], {
@@ -245,6 +253,7 @@ class Chat(WebsocketConsumer):
         print(data)
         async_to_sync(self.channel_layer.group_add)(
             'room-'+data['roomname'], self.channel_name)
+        myRoom.objects.get_or_create(roomname=data['roomname'])
 
     def update_friendlist_event(self, data):
         print('update_friendlist_event')
