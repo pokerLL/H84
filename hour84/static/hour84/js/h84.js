@@ -113,6 +113,15 @@ function message_event(data) {
     }
 }
 
+function online_user_update_event(data){
+    if(data._type == 'remove'){
+        $(online_usernum).text(parseInt($(online_usernum))-1);
+    }else if(data._type =='add'){
+        $(online_usernum).text(parseInt($(online_usernum))+1);
+    }
+}
+
+
 function send_message(_from, _to, message) {
     // console.log(_from, "->", _to, " : ", message);
     socket.send(JSON.stringify({
@@ -168,7 +177,9 @@ socket.onmessage = function(e) {
         message_event(data);
     } else if (data.action == 'load_userinfo') {
         load_userinfo_event(data);
-    } else {
+    } else if (data.action == 'online_user_update'){
+        online_user_update_event(data);
+    }else {
         console.log('router wrong....');
         // console.log(data);
     }

@@ -46,6 +46,25 @@ class Chat(WebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.user = None
 
+    def onlineUserUpdateEvent(self, action, elem):
+        self.send(json.dumps({
+            'action': 'online_user_update',
+            '_type': action,
+            'elem': elem
+        }))
+
+    def onlineUserOperate(self,action,elem):
+        if action == 'remove':
+            ONLINE_USER.remove(elem)
+            onlineUserUpdateEvent(action,elem)
+        elif action =='add':
+            ONLINE_USER.add(elem)
+            onlineUserUpdateEvent(action,elem)
+        elif action == 'match':
+            return ONLINE_USER.match(data['content'])
+        else:
+            print(action ,' operation to ONLINE_USER_SET : wrong')
+
     def connect(self):
         print('connect...')
         self.accept()
@@ -53,7 +72,7 @@ class Chat(WebsocketConsumer):
     def disconnect(self, close_code):
         print('disconnect...', close_code)
         if self.user:
-            ONLINE_USER.remove(self.user.username)
+            self.onlineUserOperate('remove',self.user.username)
 
     def group_send_event(self, event):
         data = event['data']
@@ -77,6 +96,8 @@ class Chat(WebsocketConsumer):
             self.list_operation_event(data)
         elif action == 'join_room':
             self.join_room_event(data)
+        elif action == 'update_friendlist':
+            self.update_friendlist_event(data)
         else:
             async_to_sync(self.channel_layer.group_send)(
                 'user-'+self.user.username,
@@ -119,14 +140,14 @@ class Chat(WebsocketConsumer):
             'user-'+self.user.username, self.channel_name)
         self.friends = set()
         self.rooms = set()
-        ONLINE_USER.add(self.user.username)
+        self.onlineUserOperate('add',self.user.username)
         if self.user.real_in_db:
             self.friends = set(self.user.get_friends())
 
     def search_event(self, data):
         print("search_event")
         print(data)
-        _list = ONLINE_USER.match(data['content'])
+        _list = onlineUserOperate(data['content'])
         self.send(json.dumps({
             'action':'search',
             'match_list':json.dumps(_list)
@@ -169,3 +190,9 @@ class Chat(WebsocketConsumer):
         print('join_room_event')
         print(data)
         async_to_sync(self.channel_layer.group_add)('room-'+data['roomname'],self.channel_name)
+
+
+    def update_friendlist_event(self,data):
+        print('update_friendlist_event')
+        print(data)
+        self.user.friends.add(myUser.objects.get(username=data['friend_name']))
