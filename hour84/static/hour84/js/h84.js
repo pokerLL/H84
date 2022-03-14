@@ -129,6 +129,7 @@ function message_event(data) {
     console.log('message_event');
     // console.log(data);
     if (data['_type'] == 'user') {
+        add_listitem(data['_from'],'user');
         add_messgae(data['_from'], data['content'], data['_from'], data['_type']);
     } else if (data['_type'] == 'room') {
         if (data['_from'] != $(app_username).text())
