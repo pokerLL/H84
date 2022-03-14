@@ -29,6 +29,11 @@ class myUser(models.Model):
             _.append(i['username'])
         return _
 
+    def clean_message(self):
+        pass
+
+    def load_message(self,friend_name):
+        pass
 
 
 class myUserMessage(models.Model):
@@ -39,10 +44,6 @@ class myUserMessage(models.Model):
 
     def __str__(self):
         return self.content
-
-    def send(self, username):
-        pass
-
 
 class myRoomMessage(models.Model):
     from_user = models.ManyToManyField('myUser')
@@ -65,5 +66,8 @@ class myRoom(models.Model):
     def __str__(self):
         return self.roomname
 
-    def user_join(self):
+    def clean_message(self):
+        pass
+
+    def load_message(self):
         pass
