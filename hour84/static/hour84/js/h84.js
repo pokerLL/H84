@@ -164,11 +164,16 @@ function add_messgae(_from, message, _pane, _type) {
     <div class="app-message-top-userinfo">%s</div>%m<hr/>
 </div>`;
     console.log('add_messgae', _from, message, _type);
-    var panname = 'message-pane-%t-%d'.replace('%t', _type).replace("%d", _pane);
+    
+    var pane = '#message-pane-%t-%d'.replace('%t', _type).replace("%d", _pane);
     // console.log(panname);
-    $('#' + panname).append(msg.replace("%s", _from).replace("%m", message));
+    if ($(pane).length == 0) {
+        $(app_right_panel_body).append(`<div class="message-pane" id="message-pane-%t-%d"></div>`.replace('%t', _type).replace("%d", _pane));
+        $(pane).hide();
+    }
+    $(pane).append(msg.replace("%s", _from).replace("%m", message));
     // console.log($('#' + panname)[0].scrollHeight);
-    var _height = $('#' + panname)[0].scrollHeight;
+    var _height = $(pane)[0].scrollHeight;
     $(app_right_panel_body).scrollTop(_height);
 }
 
