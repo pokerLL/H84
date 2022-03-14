@@ -19,13 +19,13 @@ class online_user_list:
         self.list1 = set()  # for user not in db
         self.list2 = set()  # for user in db
 
-    def add(self, elem, read_in_db):
+    def add(self, elem, real_in_db):
         if real_in_db:
             self.list2.add(elem)
         else:
             self.list1.add(elem)
 
-    def remove(self, elem, read_in_db):
+    def remove(self, elem, real_in_db):
         if real_in_db:
             self.list2.discard(elem)
         else:
