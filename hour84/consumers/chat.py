@@ -170,16 +170,15 @@ class Chat(WebsocketConsumer):
     def login_init(self):
         print("login_init")
         async_to_sync(self.channel_layer.group_add)('ONLINE_USER',self.channel_name)
-        async_to_sync(self.channel_layer.group_add)(
-            'user-'+self.user.username, self.channel_name)
-        self.onlineUserOperate('add',self.user.username)
+        async_to_sync(self.channel_layer.group_add)('user-'+self.user.username, self.channel_name)
         if self.user.real_in_db:
             self.friends = set(self.user.get_friends())
+        self.onlineUserOperate('add',self.user.username)
 
     def search_event(self, data):
         print("search_event")
         print(data)
-        _list = onlineUserOperate(data['content'])
+        _list = onlineUserOperate('match',data['content'])
         self.send(json.dumps({
             'action':'search',
             'match_list':json.dumps(_list)
