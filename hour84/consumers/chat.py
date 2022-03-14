@@ -62,7 +62,6 @@ class Chat(WebsocketConsumer):
                         }
                     }
                 )
-                self.friends.remove(elem)
             async_to_sync(self.channel_layer.group_send)(
                 'ONLINE_USER',{
                 'type':'group_send_event',
@@ -85,7 +84,6 @@ class Chat(WebsocketConsumer):
                         }
                     }
                 )
-                self.friends.remove(elem)
             async_to_sync(self.channel_layer.group_send)(
                 'ONLINE_USER',{
                 'type':'group_send_event',
