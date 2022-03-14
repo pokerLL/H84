@@ -56,10 +56,10 @@ class Chat(WebsocketConsumer):
     def onlineUserOperate(self,action,elem):
         if action == 'remove':
             ONLINE_USER.remove(elem)
-            onlineUserUpdateEvent(action,elem)
+            self.onlineUserUpdateEvent(action,elem)
         elif action =='add':
             ONLINE_USER.add(elem)
-            onlineUserUpdateEvent(action,elem)
+            self.onlineUserUpdateEvent(action,elem)
         elif action == 'match':
             return ONLINE_USER.match(data['content'])
         else:

@@ -115,9 +115,9 @@ function message_event(data) {
 
 function online_user_update_event(data){
     if(data._type == 'remove'){
-        $(online_usernum).text(parseInt($(online_usernum))-1);
+        $(app_online_usernum).text(parseInt($(online_usernum))-1);
     }else if(data._type =='add'){
-        $(online_usernum).text(parseInt($(online_usernum))+1);
+        $(app_online_usernum).text(parseInt($(online_usernum))+1);
     }
 }
 
