@@ -16,30 +16,45 @@ from select import select
 
 class online_user_list:
     def __init__(self):
-        self.list = set()
+        self.list1 = set()  # for user not in db
+        self.list2 = set()  # for user in db
 
-    def add(self, elem):
-        self.list.add(elem)
+    def add(self, elem, read_in_db):
+        if real_in_db:
+            self.list2.add(elem)
+        else:
+            self.list1.add(elem)
 
-    def remove(self, elem):
-        self.list.discard(elem)
+    def remove(self, elem, read_in_db):
+        if real_in_db:
+            self.list2.discard(elem)
+        else:
+            self.list1.discard(elem)
 
     def match(self, elem):
-        list_str = str(self.list)
-        res = re.findall("(?<=')[^, ]*?" + elem + ".*?(?=')", list_str)
+        list_str1 = str(self.list1)
+        res1 = re.findall("(?<=')[^, ]*?" + elem + ".*?(?=')", list_str1)
+        list_str2 = str(self.list2)
+        res2 = re.findall("(?<=')[^, ]*?" + elem + ".*?(?=')", list_str2)
+        res = res1 + res2
         return res
 
+    def is_anonymous(self, elem):
+        return (elem in self.list1)
+
     def __iter__(self):
-        return self.list.__iter__()
+        # return self.list.__iter__()
+        pass
 
     def __str__(self):
-        return str(self.list)
-    
+        return str(self.list1)+str(self.list2)
+
     def __len__(self):
-        return len(self.list)
+        return len(self.list1)+len(self.list2)
 
 
 ONLINE_USER = online_user_list()
+
 
 class Chat(WebsocketConsumer):
     def __init__(self, *args, **kwargs):
@@ -48,55 +63,55 @@ class Chat(WebsocketConsumer):
         self.friends = set()
         self.room = set()
 
-    def onlineUserOperate(self,action,elem):
-        if action == 'remove':
-            ONLINE_USER.remove(elem)
+    def onlineUserOperate(self, action, elem):
+        if action == 'remove':  # only called by slef
+            ONLINE_USER.remove(elem, self.user.real_in_db)
             for fr in self.friends:
                 async_to_sync(self.channel_layer.group_send)(
-                    'user-'+fr,{
-                        'type':'group_send_event',
-                        'data':{
-                            'action':'friendlist_update',
-                            '_type':'offline',
-                            'friend_name':self.user.username,
+                    'user-'+fr, {
+                        'type': 'group_send_event',
+                        'data': {
+                            'action': 'friendlist_update',
+                            '_type': 'offline',
+                            'friend_name': self.user.username,
                         }
                     }
                 )
             async_to_sync(self.channel_layer.group_send)(
-                'ONLINE_USER',{
-                'type':'group_send_event',
-                'data':{
-                    'action':'online_user_update',
-                    '_type':'user_offline',
-                    'username':elem,
-                }
-            })
-        elif action =='add':
-            ONLINE_USER.add(elem)
+                'ONLINE_USER', {
+                    'type': 'group_send_event',
+                    'data': {
+                        'action': 'online_user_update',
+                        '_type': 'user_offline',
+                        'username': elem,
+                    }
+                })
+        elif action == 'add':
+            ONLINE_USER.add(elem, self.user.real_in_db)
             for fr in self.friends:
                 async_to_sync(self.channel_layer.group_send)(
-                    'user-'+fr,{
-                        'type':'group_send_event',
-                        'data':{
-                            'action':'friendlist_update',
-                            '_type':'online',
-                            'friend_name':self.user.username,
+                    'user-'+fr, {
+                        'type': 'group_send_event',
+                        'data': {
+                            'action': 'friendlist_update',
+                            '_type': 'online',
+                            'friend_name': self.user.username,
                         }
                     }
                 )
             async_to_sync(self.channel_layer.group_send)(
-                'ONLINE_USER',{
-                'type':'group_send_event',
-                'data':{
-                    'action':'online_user_update',
-                    '_type':'user_online',
-                    'username':elem,
-                }
-            })
+                'ONLINE_USER', {
+                    'type': 'group_send_event',
+                    'data': {
+                        'action': 'online_user_update',
+                        '_type': 'user_online',
+                        'username': elem,
+                    }
+                })
         elif action == 'match':
             return ONLINE_USER.match(elem)
         else:
-            print(action ,' operation to ONLINE_USER_SET : wrong')
+            print(action, ' operation to ONLINE_USER_SET : wrong')
 
     def connect(self):
         print('connect...')
@@ -105,7 +120,7 @@ class Chat(WebsocketConsumer):
     def disconnect(self, close_code):
         print('disconnect...', close_code)
         if self.user:
-            self.onlineUserOperate('remove',self.user.username)
+            self.onlineUserOperate('remove', self.user.username)
 
     def group_send_event(self, event):
         data = event['data']
@@ -169,19 +184,21 @@ class Chat(WebsocketConsumer):
 
     def login_init(self):
         print("login_init")
-        async_to_sync(self.channel_layer.group_add)('ONLINE_USER',self.channel_name)
-        async_to_sync(self.channel_layer.group_add)('user-'+self.user.username, self.channel_name)
+        async_to_sync(self.channel_layer.group_add)(
+            'ONLINE_USER', self.channel_name)
+        async_to_sync(self.channel_layer.group_add)(
+            'user-'+self.user.username, self.channel_name)
         if self.user.real_in_db:
             self.friends = set(self.user.get_friends())
-        self.onlineUserOperate('add',self.user.username)
+        self.onlineUserOperate('add', self.user.username)
 
     def search_event(self, data):
         print("search_event")
         print(data)
-        _list = self.onlineUserOperate('match',data['content'])
+        _list = self.onlineUserOperate('match', data['content'])
         self.send(json.dumps({
-            'action':'search',
-            'match_list':json.dumps(_list)
+            'action': 'search',
+            'match_list': json.dumps(_list)
         }))
 
     def message_event(self, data):
@@ -194,7 +211,7 @@ class Chat(WebsocketConsumer):
 
     def load_userinfo_event(self, data):
         print("load_userinfo_event")
-        print('online :',ONLINE_USER)
+        print('online :', ONLINE_USER)
         _len = len(ONLINE_USER)
         resp = {
             'action': "load_userinfo",
@@ -204,7 +221,7 @@ class Chat(WebsocketConsumer):
             },
             'friends': json.dumps(list(self.friends)),
             'rooms': json.dumps([]),
-            'online_usernum':_len
+            'online_usernum': _len
         }
         self.send(json.dumps(resp))
 
@@ -217,13 +234,13 @@ class Chat(WebsocketConsumer):
     def list_update(self):
         print("list_update")
 
-    def join_room_event(self,data):
+    def join_room_event(self, data):
         print('join_room_event')
         print(data)
-        async_to_sync(self.channel_layer.group_add)('room-'+data['roomname'],self.channel_name)
+        async_to_sync(self.channel_layer.group_add)(
+            'room-'+data['roomname'], self.channel_name)
 
-
-    def update_friendlist_event(self,data):
+    def update_friendlist_event(self, data):
         print('update_friendlist_event')
         print(data)
         self.user.friends.add(myUser.objects.get(username=data['friend_name']))
