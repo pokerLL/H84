@@ -258,4 +258,18 @@ class Chat(WebsocketConsumer):
     def update_friendlist_event(self, data):
         print('update_friendlist_event')
         print(data)
-        self.user.friends.add(myUser.objects.get(username=data['friend_name']))
+        resp  =  {
+            'action':'update_friendlist',
+            '_type':data['_type'],
+            'status':True
+        }
+
+        try:
+            if data['_type']=='add':
+                self.user.friends.add(myUser.objects.get(username=data['friend_name']))
+            elif data['_type'] =='remove':
+                self.user.friends.remove(myUser.objects.get(username=data['friend_name']))
+        except:
+            resp['status'] = False
+
+        self.send(json.dumps(resp))

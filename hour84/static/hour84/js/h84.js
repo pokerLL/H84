@@ -25,15 +25,19 @@ var app_page = '.app',
     app_chatobj_name = '.app-chatobj-name',
     app_message_pane = '.message-pane',
     app_sendmsg_btn = '.app-sendmsg-btn',
-    // app_message_input = '#app-message-input',
     app_message_input = 'textarea',
     app_right_panel_body = ".app-right-pane-body",
-    app_add_room = '.app-roomlist > h3';
+    app_add_room = '.app-roomlist > h3',
+    app_add_item = '.chat-item > .add-item',
+    app_delete_item = '.chat-item > .delete-item',
+    app_chat_item = '.chat-item';
 
 var chatobj_name = '',
-    chatobj_type = 'user';
+    chatobj_type = 'user',
+    friends = [],
+    rooms = [];
 
-socket.onmessage = function (e) {
+socket.onmessage = function(e) {
     var data = JSON.parse(e.data);
     console.log(data);
     if (data.action === 'login') {
@@ -48,6 +52,8 @@ socket.onmessage = function (e) {
         load_userinfo_event(data);
     } else if (data.action == 'online_user_update') {
         online_user_update_event(data);
+    } else if (data.action == 'update_friendlist') {
+        update_friendlist_event(data);
     } else {
         console.log('router wrong....');
         // console.log(data);
@@ -91,26 +97,63 @@ function load_userinfo_event(data) {
     });
 }
 
+// function add_listitem(_itemname, _listname) {
+//     if (_listname === 'user') {
+//         _list = $(app_userlist);
+//         if (_list.has('#user-' + _itemname).length === 0) {
+//             _list.append("<button class='chat-item' id='user-%d'>".replace("%d", _itemname) + _itemname + "</button>");
+//         }
+//     } else if (_listname === 'room') {
+//         _list = $(app_roomlist);
+//         if (_list.has('#room-' + _itemname).length === 0) {
+//             _list.append("<button class='chat-item' id='room-%d'>".replace("%d", _itemname) + _itemname + "</button>");
+//         }
+//     } else if (_listname === 'search') {
+//         _list = $(app_searchlist);
+//         if (_list.has('#search-' + _itemname).length === 0) {
+//             _list.append("<button class='chat-item' id='search-%d'>".replace("%d", _itemname) + _itemname + "</button>");
+//         }
+//     } else {
+//         console.log("add_listitem wrong :", _listname);
+//     }
+// }
+
+
 function add_listitem(_itemname, _listname) {
+    console.log('add_listitem:', _listname, ' ', _itemname);
     if (_listname === 'user') {
         _list = $(app_userlist);
         if (_list.has('#user-' + _itemname).length === 0) {
-            _list.append("<button class='chat-item' id='user-%d'>".replace("%d", _itemname) + _itemname + "</button>");
+            _node = `<div class="chat-item" id="user-%d">
+                        <a class="itemname">%d</a>
+                        <a class="add-item">添加</a>
+                        <a class="delete-item">删除</a>
+                    </div>`.replace('%d', _itemname).replace('%d', _itemname);
+            _list.append(_node);
         }
     } else if (_listname === 'room') {
         _list = $(app_roomlist);
         if (_list.has('#room-' + _itemname).length === 0) {
-            _list.append("<button class='chat-item' id='room-%d'>".replace("%d", _itemname) + _itemname + "</button>");
+            _node = `<div class="chat-item" id="room-%d">
+                        <a class="itemname">%d</a>
+                        <a class="delete-item">删除</a>
+                    </div>`.replace('%d', _itemname).replace('%d', _itemname);
+            _list.append(_node);
         }
     } else if (_listname === 'search') {
         _list = $(app_searchlist);
         if (_list.has('#search-' + _itemname).length === 0) {
-            _list.append("<button class='chat-item' id='search-%d'>".replace("%d", _itemname) + _itemname + "</button>");
+            _node = `<div class="chat-item" id="search-%d">
+                        <a class="itemname">%d</a>
+                        <a class="delete-item">删除</a>
+                    </div>`.replace('%d', _itemname).replace('%d', _itemname);
+            _list.append(_node);
         }
     } else {
         console.log("add_listitem wrong :", _listname);
     }
 }
+
 
 
 function search_event(data) {
@@ -129,7 +172,7 @@ function message_event(data) {
     console.log('message_event');
     // console.log(data);
     if (data['_type'] == 'user') {
-        add_listitem(data['_from'],'user');
+        add_listitem(data['_from'], 'user');
         add_messgae(data['_from'], data['content'], data['_from'], data['_type']);
     } else if (data['_type'] == 'room') {
         if (data['_from'] != $(app_username).text())
@@ -143,6 +186,10 @@ function online_user_update_event(data) {
     } else if (data._type == 'user_online') {
         $(app_online_usernum).text((parseInt($(app_online_usernum).text()) + 1));
     }
+}
+
+function update_friendlist_event(data) {
+
 }
 
 
@@ -164,7 +211,7 @@ function add_messgae(_from, message, _pane, _type) {
     <div class="app-message-top-userinfo">%s</div>%m<hr/>
 </div>`;
     console.log('add_messgae', _from, message, _type);
-    
+
     var pane = '#message-pane-%t-%d'.replace('%t', _type).replace("%d", _pane);
     // console.log(panname);
     if ($(pane).length == 0) {
@@ -189,18 +236,21 @@ function change_chatobj(_obj) {
     $(_pane).show();
 }
 
-socket.onopen = function () {
+socket.onopen = function() {
     console.log('socket connect success');
 }
 
-socket.onclose = function () {
+socket.onclose = function() {
 
 }
 
-$(document).on('click', '.chat-item', function (e) {
+$(document).on('click', app_chat_item, function(e) {
+    console.log('chat item clicked...');
+    console.log(e);
     e = e.currentTarget;
+    _name = $(e).find('.itemname').text();
     if (e.id.startsWith('search')) {
-        add_listitem(e.innerText, 'user');
+        add_listitem(_name, 'user');
     } else if (e.id.startsWith('user')) {
         chatobj_type = 'user';
     } else if (e.id.startsWith('room')) {
@@ -208,12 +258,40 @@ $(document).on('click', '.chat-item', function (e) {
     } else {
         console.log('chat-item clicked... but something went wrong');
     }
-    change_chatobj(e.innerText);
+    change_chatobj(_name);
     console.log('name:' + chatobj_name);
     console.log('type:' + chatobj_type);
 })
 
-$(app_sendmsg_btn).click(function (e) {
+$(document).on('click', app_add_item, function(e) {
+    console.log('app_add_item clicked');
+    var _node = $(e.currentTarget).parent('.chat-item');
+    var _name = _node.find('.itemname').text();
+    if (!friends.includes(_name)) {
+        socket.send(JSON.stringify({
+            'action': 'update_friendlist',
+            '_type': 'add',
+            'friend_name': _name,
+        }))
+    }
+    return false;
+})
+
+$(document).on('click', app_delete_item, function(e) {
+    console.log('app_delete_item clicked');
+    var _node = $(e.currentTarget).parent('.chat-item');
+    var _name = _node.find('.itemname').text();
+    if (!friends.includes(_name)) {
+        socket.send(JSON.stringify({
+            'action': 'update_friendlist',
+            '_type': 'remove',
+            'friend_name': _name,
+        }))
+    }
+    return false;
+})
+
+$(app_sendmsg_btn).click(function(e) {
     var msg = $(app_message_input).val();
     if (msg.length > 2 && chatobj_name != '') {
         $(app_message_input).val('');
@@ -221,14 +299,14 @@ $(app_sendmsg_btn).click(function (e) {
     }
 })
 
-$(document).keydown(function (e) {
+$(document).keydown(function(e) {
     // console.log(e.keyCode);
     if (e.ctrlKey && e.keyCode === 13) {
         has_login ? $(app_sendmsg_btn).click() : $(index_login_btn).click();
     }
 });
 
-$(index_login_btn).click(function () {
+$(index_login_btn).click(function() {
     socket.send(JSON.stringify({
         action: 'login',
         username: $(index_username).val(),
@@ -238,7 +316,7 @@ $(index_login_btn).click(function () {
     $(index_info_message).text("");
 });
 
-$(app_search_btn).click(function () {
+$(app_search_btn).click(function() {
     var search_value = $(app_search_input).val();
     if (search_value.length > 0) {
         $(app_search_input).val("");
@@ -251,17 +329,17 @@ $(app_search_btn).click(function () {
     }
 });
 
-$(app_left_userbtn).click(function () {
+$(app_left_userbtn).click(function() {
     $(app_leftlist).hide();
     $(app_userlist).show();
 });
 
-$(app_left_roombtn).click(function () {
+$(app_left_roombtn).click(function() {
     $(app_leftlist).hide();
     $(app_roomlist).show();
 });
 
-$(app_add_room).click(function () {
+$(app_add_room).click(function() {
     var _room = prompt("请输入你想创建或加入的房间名：");
     socket.send(JSON.stringify({
         'action': 'join_room',

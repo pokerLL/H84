@@ -1,3 +1,7 @@
+body {
+    user-select: none;
+}
+
 .whole-page {
     position: absolute;
     top: 0%;
@@ -334,14 +338,32 @@ textarea {
 }
 
 .chat-item {
-    left: 10%;
     width: 100%;
-    font-size: large;
+    height: 30px;
+    position: relative;
+    background-color: darkgrey;
+    border-radius: 5px;
+    margin: 2px;
+}
+
+.chat-item>.username {
+    font-size: 20px;
+    left: 5px;
+}
+
+.chat-item>.add-item {
+    float: right;
+    font-size: 15px;
+}
+
+.chat-item>.delete-item {
+    float: right;
+    font-size: 15px;
+}
+
+.chat-item>a {
+    margin: 5px;
     cursor: pointer;
-    background-color: transparent;
-    text-align: left;
-    border: 2px solid white;
-    margin: 0;
 }
 
 .app-usertype {
