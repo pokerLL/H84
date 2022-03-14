@@ -6,7 +6,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE",
 django.setup()
 
 import re
-from hour84.models import myUser, myRoom
+from hour84.models import myUser, myRoom, myUserMessage, myRoomMessage
 import json
 from asgiref.sync import async_to_sync
 from django.core.cache import cache
@@ -110,6 +110,8 @@ class Chat(WebsocketConsumer):
                 })
         elif action == 'match':
             return ONLINE_USER.match(elem)
+        elif action == 'is_anonymous':
+            return ONLINE_USER.is_anonymous(elem)
         else:
             print(action, ' operation to ONLINE_USER_SET : wrong')
 
@@ -203,6 +205,10 @@ class Chat(WebsocketConsumer):
 
     def message_event(self, data):
         print("message_event")
+        if data['_type'] =='user':
+            if self.user.real_in_db and self.onlineUserOperate('is_annoymous', data['_to']):
+                myUserMessage.objects.create(from_user__username=data['_from'],to_user__username=data['_to'],content=data['content'])
+
         async_to_sync(self.channel_layer.group_send)(
             data['_type']+'-'+data['_to'], {
                 'type': 'group_send_event',
