@@ -33,6 +33,29 @@ var app_page = '.app',
 var chatobj_name = '',
     chatobj_type = 'user';
 
+socket.onmessage = function (e) {
+    var data = JSON.parse(e.data);
+    console.log(data);
+    if (data.action === 'login') {
+        login_event(data);
+    } else if (data.action == 'register') {
+        register_event(data);
+    } else if (data.action === 'search') {
+        search_event(data);
+    } else if (data.action === 'message') {
+        message_event(data);
+    } else if (data.action == 'load_userinfo') {
+        load_userinfo_event(data);
+    } else if (data.action == 'online_user_update') {
+        online_user_update_event(data);
+    } else {
+        console.log('router wrong....');
+        // console.log(data);
+    }
+}
+
+
+
 function login_success() {
     has_login = true;
     socket.send(JSON.stringify({
@@ -113,11 +136,11 @@ function message_event(data) {
     }
 }
 
-function online_user_update_event(data){
-    if(data._type == 'remove'){
-        $(app_online_usernum).text(parseInt($(online_usernum))-1);
-    }else if(data._type =='add'){
-        $(app_online_usernum).text(parseInt($(online_usernum))+1);
+function online_user_update_event(data) {
+    if (data._type == 'user_offline') {
+        $(app_online_usernum).text(parseInt($(online_usernum)) - 1);
+    } else if (data._type == 'user_online') {
+        $(app_online_usernum).text(parseInt($(online_usernum)) + 1);
     }
 }
 
@@ -160,36 +183,15 @@ function change_chatobj(_obj) {
     $(_pane).show();
 }
 
-socket.onopen = function() {
+socket.onopen = function () {
     console.log('socket connect success');
 }
 
-socket.onmessage = function(e) {
-    var data = JSON.parse(e.data);
-    console.log(data);
-    if (data.action === 'login') {
-        login_event(data);
-    } else if (data.action == 'register') {
-        register_event(data);
-    } else if (data.action === 'search') {
-        search_event(data);
-    } else if (data.action === 'message') {
-        message_event(data);
-    } else if (data.action == 'load_userinfo') {
-        load_userinfo_event(data);
-    } else if (data.action == 'online_user_update'){
-        online_user_update_event(data);
-    }else {
-        console.log('router wrong....');
-        // console.log(data);
-    }
-}
-
-socket.onclose = function() {
+socket.onclose = function () {
 
 }
 
-$(document).on('click', '.chat-item', function(e) {
+$(document).on('click', '.chat-item', function (e) {
     e = e.currentTarget;
     if (e.id.startsWith('search')) {
         add_listitem(e.innerText, 'user');
@@ -205,7 +207,7 @@ $(document).on('click', '.chat-item', function(e) {
     console.log('type:' + chatobj_type);
 })
 
-$(app_sendmsg_btn).click(function(e) {
+$(app_sendmsg_btn).click(function (e) {
     var msg = $(app_message_input).val();
     if (msg.length > 2 && chatobj_name != '') {
         $(app_message_input).val('');
@@ -213,14 +215,14 @@ $(app_sendmsg_btn).click(function(e) {
     }
 })
 
-$(document).keydown(function(e) {
+$(document).keydown(function (e) {
     // console.log(e.keyCode);
     if (e.ctrlKey && e.keyCode === 13) {
         has_login ? $(app_sendmsg_btn).click() : $(index_login_btn).click();
     }
 });
 
-$(index_login_btn).click(function() {
+$(index_login_btn).click(function () {
     socket.send(JSON.stringify({
         action: 'login',
         username: $(index_username).val(),
@@ -230,7 +232,7 @@ $(index_login_btn).click(function() {
     $(index_info_message).text("");
 });
 
-$(app_search_btn).click(function() {
+$(app_search_btn).click(function () {
     var search_value = $(app_search_input).val();
     if (search_value.length > 0) {
         $(app_search_input).val("");
@@ -243,17 +245,17 @@ $(app_search_btn).click(function() {
     }
 });
 
-$(app_left_userbtn).click(function() {
+$(app_left_userbtn).click(function () {
     $(app_leftlist).hide();
     $(app_userlist).show();
 });
 
-$(app_left_roombtn).click(function() {
+$(app_left_roombtn).click(function () {
     $(app_leftlist).hide();
     $(app_roomlist).show();
 });
 
-$(app_add_room).click(function() {
+$(app_add_room).click(function () {
     var _room = prompt("请输入你想创建或加入的房间名：");
     socket.send(JSON.stringify({
         'action': 'join_room',

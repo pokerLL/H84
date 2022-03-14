@@ -45,12 +45,54 @@ class Chat(WebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = None
+        self.friends = set()
+        self.room = set()
 
     def onlineUserOperate(self,action,elem):
         if action == 'remove':
             ONLINE_USER.remove(elem)
+            for fr in self.friends:
+                async_to_sync(self.channel_layer.group_send)(
+                    'user-'+fr,{
+                        'type':'group_send_event',
+                        'data':{
+                            'action':'friendlist_update',
+                            '_type':'offline',
+                            'friend_name':self.user.username,
+                        }
+                    }
+                )
+                self.friends.remove(elem)
+            async_to_sync(self.channel_layer.group_send)(
+                'ONLINE_USER',{
+                'type':'group_send_event',
+                'data':{
+                    'action':'online_user_update',
+                    '_type':'user_offline'
+                }
+            })
         elif action =='add':
             ONLINE_USER.add(elem)
+            for fr in self.friends:
+                async_to_sync(self.channel_layer.group_send)(
+                    'user-'+fr,{
+                        'type':'group_send_event',
+                        'data':{
+                            'action':'friendlist_update',
+                            '_type':'online',
+                            'friend_name':self.user.username,
+                        }
+                    }
+                )
+                self.friends.remove(elem)
+            async_to_sync(self.channel_layer.group_send)(
+                'ONLINE_USER',{
+                'type':'group_send_event',
+                'data':{
+                    'action':'online_user_update',
+                    '_type':'user_online'
+                }
+            })
         elif action == 'match':
             return ONLINE_USER.match(data['content'])
         else:
@@ -127,11 +169,9 @@ class Chat(WebsocketConsumer):
 
     def login_init(self):
         print("login_init")
-	async_to_sync(self.channel_layer.group_add)('ONLINE_USER',self.channel_name)
+        async_to_sync(self.channel_layer.group_add)('ONLINE_USER',self.channel_name)
         async_to_sync(self.channel_layer.group_add)(
             'user-'+self.user.username, self.channel_name)
-        self.friends = set()
-        self.rooms = set()
         self.onlineUserOperate('add',self.user.username)
         if self.user.real_in_db:
             self.friends = set(self.user.get_friends())
