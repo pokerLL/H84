@@ -137,10 +137,11 @@ function message_event(data) {
 }
 
 function online_user_update_event(data) {
+    console.log(parseInt($(app_online_usernum).text()));
     if (data._type == 'user_offline') {
-        $(app_online_usernum).text(parseInt($(app_online_usernum).text()) - 1);
+        $(app_online_usernum).text((parseInt($(app_online_usernum).text()) - 1));
     } else if (data._type == 'user_online') {
-        $(app_online_usernum).text(parseInt($(app_online_usernum).text()) + 1);
+        $(app_online_usernum).text((parseInt($(app_online_usernum).text()) + 1));
     }
 }
 
