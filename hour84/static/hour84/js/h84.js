@@ -126,8 +126,8 @@ function add_listitem(_itemname, _listname) {
         if (_list.has('#user-' + _itemname).length === 0) {
             _node = `<div class="chat-item" id="user-%d">
                         <a class="itemname">%d</a>
-                        <a class="add-item">添加</a>
-                        <a class="delete-item">删除</a>
+                        <a class="add-item"> + </a>
+                        <a class="delete-item"> - </a>
                     </div>`.replace('%d', _itemname).replace('%d', _itemname);
             _list.append(_node);
         }
@@ -136,7 +136,7 @@ function add_listitem(_itemname, _listname) {
         if (_list.has('#room-' + _itemname).length === 0) {
             _node = `<div class="chat-item" id="room-%d">
                         <a class="itemname">%d</a>
-                        <a class="delete-item">删除</a>
+                        <a class="delete-item"> - </a>
                     </div>`.replace('%d', _itemname).replace('%d', _itemname);
             _list.append(_node);
         }
@@ -145,7 +145,7 @@ function add_listitem(_itemname, _listname) {
         if (_list.has('#search-' + _itemname).length === 0) {
             _node = `<div class="chat-item" id="search-%d">
                         <a class="itemname">%d</a>
-                        <a class="delete-item">删除</a>
+                        <a class="delete-item"> - </a>
                     </div>`.replace('%d', _itemname).replace('%d', _itemname);
             _list.append(_node);
         }
@@ -258,6 +258,9 @@ $(document).on('click', app_chat_item, function(e) {
     } else {
         console.log('chat-item clicked... but something went wrong');
     }
+    $(app_chat_item).removeClass('item-active');
+    $(e).addClass('item-active');
+    //    background-color: rgba(235, 235, 235);
     change_chatobj(_name);
     console.log('name:' + chatobj_name);
     console.log('type:' + chatobj_type);
@@ -347,3 +350,9 @@ $(app_add_room).click(function() {
     }));
     add_listitem(_room, 'room');
 })
+
+$(app_search_input).keydown(function(e) {
+    if (e.keyCode === 13) {
+        $(app_search_btn).click();
+    }
+});
