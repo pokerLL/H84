@@ -236,8 +236,8 @@ body {
 }
 
 .app-right-pane-bottom>textarea {
-    height: 98%;
-    width: 99%;
+    height: 100%;
+    width: 100%;
     resize: none;
     left: 1%;
     top: 1%;
@@ -254,7 +254,8 @@ body {
     position: absolute;
     cursor: pointer;
     border-radius: 5px;
-    right: 1%;
+    right: 0;
+    bottom: 2%;
 }
 
 input {
@@ -348,5 +349,5 @@ input {
     border: 0;
     padding: 0;
     margin: 0;
-    bottom: 1%;
+    bottom: 0;
 }
