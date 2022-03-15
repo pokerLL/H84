@@ -5,3 +5,4 @@
 *.rdb
 */migrations/*
 !**/__init__.py
+**/settings.py

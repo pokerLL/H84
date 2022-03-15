@@ -107,6 +107,7 @@ function load_userinfo_event(data) {
         friend_list = JSON.parse(data.friends),
         room_list = data.rooms;
     user = data.userinfo;
+    $(app_usr_avater).attr('src', 'http://120.24.175.31:8888/media/profilepic/%d.jpg'.replace('%d', userinfo.username))
     $(app_username).text(userinfo.username);
     $(app_usertype).text((userinfo.real_in_db) ? "(正式用户)" : "(匿名用户)");
     $(app_online_usernum).text(data.online_usernum);
