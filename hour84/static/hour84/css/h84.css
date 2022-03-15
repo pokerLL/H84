@@ -1,5 +1,8 @@
 body {
     user-select: none;
+    background: url(https://api.dujin.org/pic/ghibli);
+    background-size: cover;
+    box-sizing: border-box;
 }
 
 .whole-page {
@@ -8,9 +11,7 @@ body {
     left: 0%;
     width: 100%;
     height: 100%;
-    box-sizing: border-box;
-    background: url(https://api.dujin.org/pic/ghibli);
-    background-size: cover;
+    background-color: transparent;
 }
 
 .vcenter {
@@ -82,7 +83,7 @@ body {
     width: 100%;
     height: 25%;
     border: 1px solid orange;
-    background-color: rgba(0, 0, 0, 0);
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 .login>button {
@@ -365,20 +366,12 @@ input {
     bottom: 0;
 }
 
-.setting {
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    background-color: transparent;
-}
+.setting {}
 
 .profile {
     width: 50%;
     height: 50%;
-    background-color: yellow;
+    background-color: rgba(255, 255, 0, 0.3);
 }
 
 .profile .pic {

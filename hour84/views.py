@@ -9,6 +9,9 @@ import os
 def index(request):
     return render(request, 'hour84/index.html')
 
+def getProfilePicUrl(username):
+    return os.path.join(settings.STATIC_ROOT,username+'.jpg')
+
 
 def upload(request):
     if request.method == 'POST':
@@ -17,14 +20,13 @@ def upload(request):
             return HttpResponse('no files for upload!')
         # print(_file)
         try:
-            os.makedirs(settings.MEDIA_ROOT)
+            os.makedirs(settings.STATIC_ROOT)
         except:
             pass
         _username = request.POST.get('username')
-        _path =  os.path.join(settings.MEDIA_ROOT,_username+'.jpg')
+        _path =  getProfilePicUrl(_username)
         _dest = open(_path,'wb+')
         for chunk in _file.chunks():
             _dest.write(chunk)
-            print(_dest,'...')
         _dest.close()
         return JsonResponse({'path':_path})

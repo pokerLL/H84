@@ -3,6 +3,9 @@
 var HOST = window.location.host;
 
 var socket = new WebSocket('ws://' + HOST + '/wss/chat/');
+
+var pages = '.whole-page';
+
 var index_page = '.index',
     index_username = '[name="username"]',
     index_password = '[name="password"]',
@@ -387,10 +390,13 @@ $(app_search_input).keydown(function(e) {
 
 $(app_usr_avater).click(function(e) {
     console.log(10086);
-    $(setting_page).show();
+    $(setting_page).toggleClass('hide');
 })
 
-// $(setting_page).click(function)
+$(setting_page).click(function() {
+    console.log("setting_page clicked...");
+    $(setting_page).toggleClass('hide');
+})
 
 
 

@@ -17,6 +17,7 @@ from django.conf import settings
 
 import datetime
 
+
 class CJsonEncoder(json.JSONEncoder):
 
     def default(self, obj):
@@ -250,7 +251,6 @@ class Chat(WebsocketConsumer):
             'action': "load_userinfo",
             'userinfo': {
                 'username': self.user.username,
-                'pic': os.path.join(settings.MEDIA_ROOT,self.user.username+'.jpg'),
                 'real_in_db': self.user.real_in_db
             },
             'friends': json.dumps(list(self.friends)),
