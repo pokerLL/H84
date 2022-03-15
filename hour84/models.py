@@ -48,6 +48,7 @@ class myUserMessage(models.Model):
     to_user = models.ForeignKey(
         'myUser', on_delete=models.CASCADE, related_name='to_user')
     content = models.CharField(max_length=1024)
+    act_time = models.DateTimeField()
     c_time = models.DateTimeField(auto_now_add=True)
 
     objects = models.Manager()
@@ -61,6 +62,7 @@ class myRoomMessage(models.Model):
     from_user = models.ForeignKey('myUser', on_delete=models.CASCADE)
     to_room = models.ForeignKey('myRoom', on_delete=models.CASCADE)
     content = models.CharField(max_length=1024)
+    act_time = models.DateTimeField()
     c_time = models.DateTimeField(auto_now_add=True)
 
     objects = models.Manager()

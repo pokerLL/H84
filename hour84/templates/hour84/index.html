@@ -15,7 +15,7 @@
         <div class="login vcenter">
             <input type="text" class="inputer index-login-username" placeholder="用户名" name="username" />
             <input type="text" class="inputer index-login-password" placeholder="密码" name="password" />
-            <div>
+            <div style="display: none;">
                 设置：
                 <label><input type="radio" name="setting" value="0" checked />2小时</label>
                 <label><input type="radio" name="setting" value="1" />12小时</label>
@@ -26,11 +26,11 @@
             <button class="index-login-btn inputer">确定</button>
         </div>
     </div>
-    <div class="app whole-page hide">
+    <div class="app whole-page" style="display: none;">
         <div class="app-left-pane">
             <div class="app-left-pane-top">
                 <div class="app-left-pane-top-userinfo">
-                    <img src="{% static 'hour84/img/tx.jpg' %}" class="app-left-pane-top-userinfo-userpic">
+                    <img src="{% static 'hour84/img/tx.jpg' %}" class="app-left-pane-top-userinfo-userpic profilepic">
                     <div class="app-left-pane-top-userinfo-username app-username">用户名</div>
                     <div class="app-usertype">正式用户</div>
                 </div>
@@ -76,6 +76,15 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+    <div class="setting " style="display: none;">
+
+        <div class="vcenter profile">
+            <h3>设置</h3>
+            <!-- {%csrf_token%} -->
+            <label>头像：<input type="file" name="pic" class="pic"></label>
+            <button id="submit-btn">提交</button>
         </div>
     </div>
     <script src="{% static 'hour84/js/h84.js' %}"></script>

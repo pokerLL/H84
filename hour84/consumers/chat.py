@@ -12,7 +12,22 @@ from asgiref.sync import async_to_sync
 from django.core.cache import cache
 from channels.generic.websocket import WebsocketConsumer
 from select import select
+from django.db.models import Q
+from django.conf import settings
 
+import datetime
+
+class CJsonEncoder(json.JSONEncoder):
+
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            # 这里可以统一修改想要的格式
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(obj, datetime.date):
+            # 这里可以统一修改想要的格式
+            return obj.strftime('%Y-%m-%d')
+        else:
+            return json.JSONEncoder.default(self, obj) 
 
 class online_user_list:
     def __init__(self):
@@ -150,6 +165,8 @@ class Chat(WebsocketConsumer):
             self.join_room_event(data)
         elif action == 'update_friendlist':
             self.update_friendlist_event(data)
+        elif action == 'load_message':
+            self.load_message_event(data)
         else:
             async_to_sync(self.channel_layer.group_send)(
                 'user-'+self.user.username,
@@ -207,15 +224,17 @@ class Chat(WebsocketConsumer):
 
     def message_event(self, data):
         print("message_event")
+        print(data)
+        data['content'] =data['content'].strip()
         if data['_type'] == 'user':
             if self.user.real_in_db and not self.onlineUserOperate('is_anonymous', data['_to']):
                 print('save user message')
                 myUserMessage.objects.create(
-                    from_user=self.user, to_user=myUser.objects.get(username=data['_to']), content=data['content'])
+                    from_user=self.user, to_user=myUser.objects.get(username=data['_to']), content=data['content'],act_time=data['_time'])
         elif data['_type'] == 'room':
             if self.user.username == data['_from'] and self.user.real_in_db:
                 myRoomMessage.objects.create(
-                    from_user=self.user, to_room=myRoom.objects.get(roomname=data['_to']), content=data['content'])
+                    from_user=self.user, to_room=myRoom.objects.get(roomname=data['_to']), content=data['content'],act_time=data['_time'])
 
         async_to_sync(self.channel_layer.group_send)(
             data['_type']+'-'+data['_to'], {
@@ -231,6 +250,7 @@ class Chat(WebsocketConsumer):
             'action': "load_userinfo",
             'userinfo': {
                 'username': self.user.username,
+                'pic': os.path.join(settings.MEDIA_ROOT,self.user.username+'.jpg'),
                 'real_in_db': self.user.real_in_db
             },
             'friends': json.dumps(list(self.friends)),
@@ -273,3 +293,18 @@ class Chat(WebsocketConsumer):
             resp['status'] = False
 
         self.send(json.dumps(resp))
+
+    def load_message_event(self, data):
+        print("load_message_event")
+        if data['_type'] == 'user':
+            _users = [data['_from'], data['_to']]
+            _messages = myUserMessage.objects.filter(Q(from_user__username__in=_users) & Q(
+                to_user__username__in=_users)).values_list('from_user__username', 'to_user__username', 'content', 'act_time').order_by('act_time')
+        elif data['_type'] == 'room':
+            _messages = myRoomMessage.objects.filter(to_room__roomname=data['_to']).values_list('from_user__username', 'to_room__roomname', 'content', 'act_time').order_by('act_time')
+        # print(list(_messages))
+        self.send(json.dumps({
+            'action': 'load_message',
+            '_type': data['_type'],
+            '_messages': list(_messages),
+        }, cls=CJsonEncoder))
