@@ -229,7 +229,7 @@ function send_message(_from, _to, message, _type, _time) {
 
 function add_messgae(_sender, _pane, message, _type, _time = '') {
     var msg = `<div class="app-message">
-    <img src="../../static/hour84/img/tx.jpg">
+    <img src="%i">
     <div class="app-message-top-userinfo">%s<a class='message-time'>%t</a></div>%m<hr/>
 </div>`;
     console.log('message: from ' + _sender + '\tadd to ' + _pane + '\t:' + message)
@@ -240,7 +240,7 @@ function add_messgae(_sender, _pane, message, _type, _time = '') {
         $(pane).hide();
     }
 
-    $(pane).append(msg.replace("%s", _sender).replace("%m", message).replace('%t', _time));
+    $(pane).append(msg.replace("%s", _sender).replace("%m", message).replace('%t', _time).replace('%i', 'http://120.24.175.31:8888/media/profilepic/%d.jpg'.replace('%d', _sender)));
     var _height = $(pane)[0].scrollHeight;
     $(app_right_panel_body).scrollTop(_height);
 
@@ -400,7 +400,6 @@ $(setting_out_btn).click(function(e) {
     $(setting_page).toggleClass('hide');
     console.log(e);
 })
-
 
 
 function getContextPath() {

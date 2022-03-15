@@ -16,6 +16,8 @@ from django.db.models import Q
 from django.conf import settings
 
 import datetime
+from hour84.views import getProfilePicUrl
+from pathlib import Path
 
 
 class CJsonEncoder(json.JSONEncoder):
@@ -247,10 +249,12 @@ class Chat(WebsocketConsumer):
         print("load_userinfo_event")
         print('online :', ONLINE_USER)
         _len = len(ONLINE_USER)
+        # _f = Path(getProfilePicUrl(self.user.username)).exists()
         resp = {
             'action': "load_userinfo",
             'userinfo': {
                 'username': self.user.username,
+                # 'has_profile_pic':_f,
                 'real_in_db': self.user.real_in_db
             },
             'friends': json.dumps(list(self.friends)),
