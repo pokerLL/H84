@@ -38,7 +38,8 @@ var app_page = '.app',
 
 var setting_page = '.setting',
     setting_profile_pic = '.profile .pic',
-    setting_submit_btn = '#submit-btn';
+    setting_submit_btn = '#submit-btn',
+    setting_out_btn = '.profile>a ';
 
 var chatobj_name = '',
     chatobj_type = 'user',
@@ -394,9 +395,10 @@ $(app_usr_avater).click(function(e) {
     $(setting_page).toggleClass('hide');
 })
 
-$(setting_page).click(function() {
+$(setting_out_btn).click(function(e) {
     console.log("setting_page clicked...");
     $(setting_page).toggleClass('hide');
+    console.log(e);
 })
 
 
