@@ -10,7 +10,7 @@ def index(request):
     return render(request, 'hour84/index.html')
 
 def getProfilePicUrl(username):
-    return os.path.join(settings.STATIC_ROOT,username+'.jpg')
+    return os.path.join(settings.MEDIA_ROOT,username+'.jpg')
 
 
 def upload(request):
@@ -20,7 +20,7 @@ def upload(request):
             return HttpResponse('no files for upload!')
         # print(_file)
         try:
-            os.makedirs(settings.STATIC_ROOT)
+            os.makedirs(settings.MEDIA_ROOT)
         except:
             pass
         _username = request.POST.get('username')
