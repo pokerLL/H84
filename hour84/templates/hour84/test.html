@@ -1,0 +1,133 @@
+{%load static%}
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="{% static 'hour84/css/h84.css' %}">
+    <script src="{%static 'hour84/js/jquery.min.js'%}"></script>
+
+</head>
+
+<body>
+    <div class="index whole-page hide " style="display: none;">
+        <div class="login vcenter">
+            <input type="text" class="inputer index-login-username" placeholder="用户名" name="username" data-com.bitwarden.browser.user-edited="yes">
+            <input type="text" class="inputer index-login-password" placeholder="密码" name="password" data-com.bitwarden.browser.user-edited="yes">
+            <div style="display: none;">
+                设置：
+                <label><input type="radio" name="setting" value="0" checked="">2小时</label>
+                <label><input type="radio" name="setting" value="1">12小时</label>
+                <label><input type="radio" name="setting" value="2">24小时</label>
+                <label><input type="radio" name="setting" value="3">48小时</label>
+            </div>
+            <span class="index-info-message"></span>
+            <button class="index-login-btn inputer">确定</button>
+        </div>
+    </div>
+    <div class="app whole-page" style="display: block;">
+        <div class="app-left-pane">
+            <div class="app-left-pane-top">
+                <div class="app-left-pane-top-userinfo">
+                    <img src="http://120.24.175.31:8888/media/profilepic/a.jpg" class="app-left-pane-top-userinfo-userpic profilepic">
+                    <div class="app-left-pane-top-userinfo-username app-username">a</div>
+                    <div class="app-usertype">(正式用户)</div>
+                </div>
+                <div class="app-left-pane-top-search">
+                    <input name="search" class="app-left-pane-bottom-top-input" placeholder="搜索在线用户...">
+                    <button class="app-left-pane-bottom-top-btn">确定</button>
+                </div>
+            </div>
+            <div class="app-left-pane-bottom">
+                <div class="app-left-pane-bottom-top">
+                    <button class="app-left-userbtn">好友</button>
+                    <button class="app-left-roombtn" style="left: 50%;top: 0%;">群聊</button>
+                </div>
+                <div class="app-left-pane-bottom-body app-list">
+                    <div class="app-left-pane-bottom-body-body app-left-list app-userlist">
+
+                        <div class="chat-item item-active" id="user-b">
+                            <a class="itemname">b</a>
+                            <a class="add-item"> + </a>
+                            <a class="delete-item"> - </a>
+                        </div>
+                    </div>
+                    <div class="app-left-pane-bottom-body-body app-left-list app-roomlist" style="display: none;">
+                        <h3>添加群聊</h3>
+                    </div>
+                    <div class="app-left-pane-bottom-body-body app-left-list app-searchlist" style="display: none;"></div>
+                </div>
+                <div class="app-left-pane-bottom-bottom">
+                    <div class="app-left-pane-bottom-bottom-info">
+                        当前共
+                        <a class="app-online-usernum">1</a> 人在线。
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="app-right-pane">
+            <div class="app-message-pane">
+                <div class="app-right-pane-top">
+                    <p class="app-chatobj-name">b</p>
+                </div>
+                <div class="app-right-pane-body">
+                    <div class="message-pane" id="message-pane-user-b" style="">
+                        <div class="app-message">
+                            <img src="http://120.24.175.31:8888/media/profilepic/a.jpg">
+                            <div class="app-message-top-userinfo">a<a class="message-time">2022-03-15 12:56:41</a></div>您放屁？
+                            <hr>
+                        </div>
+                        <div id="32ff65e6-44bd-3655-9aa5-5722f14a67fb" class="message-scroll-item message-wrapper___1As4h robot___2EMWf">
+                            <div>
+                                <div class="avatar-wrapper___h-LCJ">
+                                    <div class="avatar___FWvjD"><img src="https://os.alipayobjects.com/rmsportal/AatiDGBrqYjXZTK.jpg" alt="机器人"></div>
+                                    <div class="name___MskKv">机器人</div>
+                                </div>
+                                <div class="robot-message___3NHiM">
+                                    <div class="robot-message-collapse-content">
+                                        <div>
+                                            <div class="message-content" data-intentid="" data-propid="" data-message-type="robot" data-knowledge-id="" data-chat-uuid="">
+
+                                                <div class="answer-wrapper">
+
+
+                                                    <div class="J-answerContent-wrap" id="">我是cp喵客服，请问有什么可以帮您
+                                                        <div class="robot-message-collapse-expand">
+                                                            <span class="expand-text">展开</span>
+                                                            <i class="expand-icon icon"></i>
+                                                            <div class="gradient"></div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="app-right-pane-bottom">
+                    <textarea placeholder="在这里输入你想发送的信息..." id="app-message-input"></textarea>
+                    <button class="app-sendmsg-btn">发送(ctrl+enter)</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="setting whole-page hide">
+
+        <div class="vcenter profile">
+            <h3>设置</h3><a>X</a>
+            <label>头像：<input type="file" name="pic" class="pic"></label>
+            <button id="submit-btn">提交</button>
+        </div>
+    </div>
+    <script src="/static/hour84/js/h84.js"></script>
+
+
+</body>
+
+</html>

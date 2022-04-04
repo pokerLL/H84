@@ -30,3 +30,6 @@ def upload(request):
             _dest.write(chunk)
         _dest.close()
         return JsonResponse({'path':_path})
+
+def test(request):
+    return render(request,'hour84/test.html',{})
