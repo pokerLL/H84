@@ -20,6 +20,7 @@ from hour84.views import getProfilePicUrl
 from pathlib import Path
 
 
+
 class CJsonEncoder(json.JSONEncoder):
 
     def default(self, obj):
